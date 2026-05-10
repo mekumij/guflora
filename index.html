@@ -1251,7 +1251,6 @@ function renderCommunity() {
              <div class="res-cards">`;
     grouped[type].forEach(c => {
       html += `<div class="res-card">
-        <span class="res-card-type ${c.type}">${LABELS[c.type]?.split(' ')[0] || c.type}</span>
         <div class="res-card-name">${c.name}</div>
         <div class="res-card-desc">${c.desc}</div>
         <a class="res-card-link" href="${c.url}" target="_blank" rel="noopener">
