@@ -728,8 +728,8 @@ img { border: 1px solid #2b463c !important; }
   </div>
   <span class="count-pill" id="countPill">— species</span>
 
-  <!-- row 2: instant identification -->
-  <div class="toolbar-row">
+  <!-- row 2: instant identification (shown only when Plantae group selected) -->
+  <div class="toolbar-row" id="plantFilterRow" style="display:none;">
     <span class="filter-label">Flower color</span>
     <select id="colorFilter" class="filter-select">
       <option value="all">Any color</option>
@@ -2088,11 +2088,12 @@ function updateChips() {
 // ── FILTER & SORT ──────────────────────────────────────────────────────
 function applyAll() {
   const q = query.toLowerCase().trim();
-  // Show/hide fungi filter row based on group
+  // Show/hide filter rows based on group selection
+  const plantRow = document.getElementById('plantFilterRow');
   const fungiRow = document.getElementById('fungiFilterRow');
-  if (gFilter === 'Fungi') {
-    fungiRow.style.display = 'flex';
-  } else {
+
+  if (gFilter === 'Plantae') {
+    plantRow.style.display = 'flex';
     fungiRow.style.display = 'none';
     fungiColorFilter = 'all';
     fungiShapeFilter = 'all';
@@ -2100,6 +2101,26 @@ function applyAll() {
     const fs = document.getElementById('fungiShapeFilter');
     if (fc) fc.value = 'all';
     if (fs) fs.value = 'all';
+  } else if (gFilter === 'Fungi') {
+    fungiRow.style.display = 'flex';
+    plantRow.style.display = 'none';
+    colorFilter = 'all'; leafFilter = 'all'; sizeFilter = 'all'; habitFilter = 'all';
+    const pc = document.getElementById('colorFilter');
+    const pl = document.getElementById('leafFilter');
+    const ps = document.getElementById('sizeFilter');
+    const ph = document.getElementById('habitFilter');
+    if (pc) pc.value = 'all';
+    if (pl) pl.value = 'all';
+    if (ps) ps.value = 'all';
+    if (ph) ph.value = 'all';
+  } else {
+    // All — hide both
+    plantRow.style.display = 'none';
+    fungiRow.style.display = 'none';
+    colorFilter = 'all'; leafFilter = 'all'; sizeFilter = 'all'; habitFilter = 'all';
+    fungiColorFilter = 'all'; fungiShapeFilter = 'all';
+    ['colorFilter','leafFilter','sizeFilter','habitFilter','fungiColorFilter','fungiShapeFilter']
+      .forEach(id => { const el = document.getElementById(id); if (el) el.value = 'all'; });
   }
   filtered = SPECIES.filter(s => {
     if (gFilter !== 'all' && s.group !== gFilter) return false;
