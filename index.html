@@ -678,6 +678,7 @@ img { border: 1px solid #2b463c !important; }
 .res-card-desc { display: block !important; }
 .res-card-type { display: inline-block !important; }
 
+</style>
 <style>
 /* cursor */
 *, *::before, *::after {
@@ -733,8 +734,7 @@ img { border: 1px solid #2b463c !important; }
     </select>
   </div>
   <span class="count-pill" id="countPill">— species</span>
-  <div class="h-gap"></div>
- 
+
   <!-- filters toggle button -->
   <button id="filtersToggleBtn" class="tab" style="margin-left:4px;">
     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="vertical-align:-1px;margin-right:4px;"><line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="11" y1="18" x2="13" y2="18"/></svg>
@@ -1408,7 +1408,7 @@ const LEAF_SHAPE = {
   'Asclepias curassavica':'lance','Hippobroma':'lance',
   'Cenchrus echinatus':'linear','Bryophyta':'scale',
   'Asteroideae':'lance','Tacca':'lobed',
-  // Final gap-closure entries
+  // final gap-closure entries
   'Agaricales':'scale','Caulerpa racemosa':'linear',
   'Davallia solida':'compound','Davallia':'compound',
   'Phallus indusiatus':'scale','Phallus':'scale',
@@ -1428,7 +1428,7 @@ const LEAF_SHAPE = {
   'Epidendrum':'linear','Geodorum recurvum':'broad-oval',
   'Eulophia':'linear',
   'Zeuxine':'linear','Nervilia':'heart',
-  // Final 80% push
+  // final 80% push
   'Eugenia':'broad-oval','Leucocoprinus birnbaumii':'scale',
   'Pteris vittata':'compound','Eleusine indica':'linear',
   'Citrus':'compound','Allamanda cathartica':'broad-oval',
@@ -1438,7 +1438,7 @@ const LEAF_SHAPE = {
   'Dactyloctenium aegyptium':'linear',
 };
 
-// Plant size: 'small'(<1m), 'medium'(1-5m), 'tall'(>5m)
+// plant size: 'small'(<1m), 'medium'(1-5m), 'tall'(>5m)
 const PLANT_SIZE = {
   tall: [
     'Cocos nucifera','Artocarpus altilis','Artocarpus mariannensis','Delonix regia',
@@ -1473,7 +1473,7 @@ const PLANT_SIZE = {
     'Araucaria columnaris','Araucaria heterophylla',
     'Swietenia','Tabebuia rosea','Tabebuia aurea','Tabebuia',
     'Cassia fistula','Delonix','Spathodea',
-    // Additional tall trees
+    // additional tall trees
     'Mammea odorata','Ficus','Ficus prolixa','Ficus tinctoria','Ficus microcarpa',
     'Eugenia palumbis','Eugenia','Syzygium','Psidium',
     'Piper guahamense',
@@ -1486,7 +1486,7 @@ const PLANT_SIZE = {
     'Senna occidentalis','Medinilla medinillana','Volkameria inermis',
     'Tabernaemontana pandacaqui','Cordia sebestena',
     'Jatropha integerrima','Euphorbia cyathophora','Clerodendrum quadriloculare',
-    // Additional medium shrubs/plants
+    // additional medium shrubs/plants
     'Antigonon leptopus','Flagellaria indica','Mucuna gigantea',
     'Freycinetia reineckei','Hymenocallis littoralis','Alpinia purpurata',
     'Epipremnum aureum','Strobilanthes reptans','Passiflora vesicaria',
@@ -1500,7 +1500,7 @@ const PLANT_SIZE = {
     'Passiflora','Bothriochloa',
     'Pithecellobium dulce','Hellenia speciosa',
     'Dischidia puberula','Abutilon indicum',
-    // Additional medium-sized missing species
+    // additional medium-sized missing species
     'Gynochthodes umbellata','Dendrocnide latifolia',
     'Telosma procumbens','Cassytha filiformis','Muntingia calabura',
     'Alocasia macrorrhizos','Psychotria mariana',
@@ -1539,7 +1539,7 @@ const PLANT_SIZE = {
     'Desmodium incanum','Stylosanthes guianensis','Indigofera spicata',
     'Phyllanthus debilis','Pilea microphylla',
     'Elatostema calcareum','Procris pedunculata',
-    // Additional small species
+    // additional small species
     'Poaceae','Polytrias indica','Andropogoneae','Polypodiopsida',
     'Caulerpa racemosa','Bulbophyllum guamense','Cenchrus echinatus',
     'Sansevieria trifasciata','Palhinhaea cernua',
@@ -1582,7 +1582,7 @@ const PLANT_SIZE = {
     'Youngia japonica','Youngia','Hyptis','Senega paniculata',
     'Acalypha hispida','Euphorbia hypericifolia',
     'Tacca leontopetaloides',
-    // Fungi — all small in functional sense
+    // small fungi
     'Agaricales','Trametes','Polyporales','Phallus indusiatus',
     'Xylaria','Auricularia','Agaricomycetes','Lecanoromycetes','Ramalina',
     'Schizophyllum commune','Lentinus','Trametes sanguinea','Trametes coccinea',
@@ -1593,11 +1593,11 @@ const PLANT_SIZE = {
     'Coprinopsis lagopus','Leucocoprinus','Coprinellus',
   ],
 };
-// Build reverse map: sn -> size
+// reverse map sn -> size
 const SIZE_MAP = {};
 Object.entries(PLANT_SIZE).forEach(([sz, list]) => list.forEach(sn => SIZE_MAP[sn] = sz));
 
-// Growth habit
+// growth habit
 const HABIT_MAP = {
   tree: [
     'Cocos nucifera','Artocarpus altilis','Artocarpus mariannensis','Delonix regia',
@@ -1759,7 +1759,7 @@ const HABIT_MAP = {
 };
 const HABIT_REVERSE = {};
 Object.entries(HABIT_MAP).forEach(([h, list]) => list.forEach(sn => HABIT_REVERSE[sn] = h));
-// Taxgroup → habit fallback
+// taxgroup habit fallback
 const TAXGROUP_HABIT = {
   'Grasses':'grass','Sedges':'grass','Ferns':'fern','Mosses':'fern',
   'Liverworts':'fern','Orchids':'epiphyte','Palms':'tree','Cycads':'tree',
@@ -1768,8 +1768,8 @@ const TAXGROUP_HABIT = {
   'Lichens':'fungi','Other Fungi':'fungi',
 };
 
-// ── FUNGI-SPECIFIC LOOKUP TABLES ──────────────────────────────────────
-// Fungi color
+// fungi look up table
+// fungi color
 const FUNGI_COLOR_MAP = {
   white: [
     'Schizophyllum commune','Trametes lactinea','Trametes',
@@ -1822,7 +1822,7 @@ const FUNGI_COLOR_MAP = {
 const FUNGI_COLOR_REVERSE = {};
 Object.entries(FUNGI_COLOR_MAP).forEach(([c, list]) => list.forEach(sn => FUNGI_COLOR_REVERSE[sn] = c));
 
-// Fungi shape
+// fungi shape
 const FUNGI_SHAPE_MAP = {
   cap: [
     'Agaricales','Agaricomycetes','Agaricaceae','Agaricineae','Schizophyllum commune',
@@ -1889,7 +1889,7 @@ const FUNGI_SHAPE_MAP = {
 };
 const FUNGI_SHAPE_REVERSE = {};
 Object.entries(FUNGI_SHAPE_MAP).forEach(([sh, list]) => list.forEach(sn => FUNGI_SHAPE_REVERSE[sn] = sh));
-// Taxgroup → shape fallback
+// taxgroup shape fallback
 const TAXGROUP_FUNGI_SHAPE = {
   'Gilled Mushrooms':'cap','Bracket & Shelf Fungi':'bracket',
   'Stinkhorns':'stinkhorn','Jelly Fungi':'jelly',
@@ -1897,7 +1897,7 @@ const TAXGROUP_FUNGI_SHAPE = {
   'Lichens':'crust',
 };
 
-// Ecosystem keyed by scientific name
+// ecosystem keyed by scientific name
 const ECOSYSTEM_MAP = {
   limestone: [
     'Cycas micronesica','Cynometra ramiflora','Bikkia tetrandra','Ficus prolixa',
@@ -1975,7 +1975,7 @@ Object.entries(ECOSYSTEM_MAP).forEach(([eco, list]) => list.forEach(sn => {
   ECO_REVERSE[sn].push(eco);
 }));
 
-// Village boundaries: approximate lat/lon bounding boxes for each village
+// lat/lon villages
 // [latMin, latMax, lonMin, lonMax]
 const VILLAGE_BOUNDS = {
   'Hagåtña':          [13.460, 13.480, 144.745, 144.760],
@@ -2005,7 +2005,7 @@ function getVillage(lat, lon) {
   return null;
 }
 
-// ── TAXONOMY ───────────────────────────────────────────────────────────
+// taxonomy
 const PLANTAE_GROUPS = ['Flowering Plants','Ferns','Grasses','Sedges','Orchids','Palms','Cycads','Mosses','Liverworts'];
 const FUNGI_GROUPS   = ['Gilled Mushrooms','Bracket & Shelf Fungi','Stinkhorns','Jelly Fungi','Cup & Sac Fungi','Earthstars & Puffballs','Lichens','Other Fungi'];
 const ALL_TAX_GROUPS = [...PLANTAE_GROUPS, ...FUNGI_GROUPS];
@@ -2028,9 +2028,9 @@ function rebuildTaxSelect() {
 }
 rebuildTaxSelect();
 
-// ── LOOKUP HELPERS ─────────────────────────────────────────────────────
+// lookup assist
 function getColor(s) {
-  // exact match, then genus match
+  // exact match then genus match
   if (FLOWER_COLOR[s.sn]) return FLOWER_COLOR[s.sn];
   const genus = s.sn.split(' ')[0];
   return FLOWER_COLOR[genus] || null;
@@ -2073,7 +2073,7 @@ function getFungiShape(s) {
   return TAXGROUP_FUNGI_SHAPE[s.taxgroup] || null;
 }
 
-// ── ACTIVE FILTER CHIPS ────────────────────────────────────────────────
+// active filter chips
 function updateChips() {
   const container = document.getElementById('activeFilters');
   const chips = [];
@@ -2108,7 +2108,7 @@ function updateChips() {
     container.style.display = 'none';
     container.innerHTML = '';
   }
-  // Show a dot on the Filters button when any filter is active
+  // active filter marker
   const btn = document.getElementById('filtersToggleBtn');
   if (btn) {
     const dot = btn.querySelector('.filter-active-dot');
@@ -2120,10 +2120,10 @@ function updateChips() {
   }
 }
 
-// ── FILTER & SORT ──────────────────────────────────────────────────────
+// filter & sort
 function applyAll() {
   const q = query.toLowerCase().trim();
-  // Show/hide filter rows based on group selection
+  // filter roles for group selec
   const plantRow = document.getElementById('plantFilterRow');
   const fungiRow = document.getElementById('fungiFilterRow');
 
@@ -2149,7 +2149,7 @@ function applyAll() {
     if (ps) ps.value = 'all';
     if (ph) ph.value = 'all';
   } else {
-    // All — hide both
+    // all, hide both
     plantRow.style.display = 'none';
     fungiRow.style.display = 'none';
     colorFilter = 'all'; leafFilter = 'all'; sizeFilter = 'all'; habitFilter = 'all';
@@ -2227,7 +2227,7 @@ function makeCard(s, idx) {
   const img = s.imgs[0]
     ? `<img src="${s.imgs[0]}" alt="${s.sn}" loading="lazy" onerror="this.parentNode.innerHTML='<div class=no-img>${s.group==='Fungi'?'🍄':'🌿'}</div>'">`
     : `<div class="no-img">${s.group==='Fungi'?'🍄':'🌿'}</div>`;
-  // Build trait badges
+  // trait badge
   const badges = [];
   if (s.group === 'Fungi') {
     const fc = getFungiColor(s);
@@ -2279,7 +2279,7 @@ function initMap() {
 function renderMap() {
   initMap();
   markerLayer.clearLayers();
-  // group nearby points — plot one marker per species
+  // species marker map
   filtered.forEach(s => {
     const isF = s.group === 'Fungi';
     const color = isF ? '#8b4a20' : '#2a7d1a';
@@ -2384,7 +2384,7 @@ function openDetail(s) {
       View full taxon on iNaturalist
     </a>`;
 
-  // Thumb clicks
+  // thumb clicks
   document.querySelectorAll('#gThumbs img').forEach(th => {
     th.addEventListener('click', () => {
       const mi = document.getElementById('gMainImg');
@@ -2398,10 +2398,10 @@ function openDetail(s) {
   document.getElementById('backdrop').classList.add('open');
   document.getElementById('detail').scrollTop = 0;
 
-  // Mini map
+  // mini map
   setTimeout(() => initDetailMap(s), 80);
 
-  // Wikipedia
+  // wikipedia
   fetchWiki(s.sn, isF);
 }
 
@@ -2415,7 +2415,7 @@ function initDetailMap(s) {
   }).addTo(detailMiniMap);
 }
 
-// Wikipedia fetch
+// wikipedia fetch
 const wikiCache = {};
 async function fetchWiki(sn, isF) {
   const box = document.getElementById('wikiBox');
@@ -2460,7 +2460,7 @@ function closeDetail() {
 }
 document.addEventListener('keydown', e => { if (e.key==='Escape') closeDetail(); });
 
-// Dynamic toolbar top: match sticky header height on all screen sizes
+// dynamic toolbar top
 function syncToolbarTop() {
   const h = document.querySelector('header');
   const t = document.querySelector('.toolbar');
@@ -2470,7 +2470,7 @@ window.addEventListener('resize', syncToolbarTop);
 window.addEventListener('load', syncToolbarTop);
 syncToolbarTop();
 
-// Filters toggle button
+// filters toggle button
 const filtersToggleBtn = document.getElementById('filtersToggleBtn');
 const filterPanel = document.getElementById('filterPanel');
 let filtersOpen = false;
@@ -2782,7 +2782,7 @@ document.querySelectorAll('#groupTabs .tab').forEach(tab => {
     document.querySelectorAll('#groupTabs .tab').forEach(t => t.classList.remove('active'));
     tab.classList.add('active');
     gFilter = tab.dataset.g;
-    // Auto-open filter panel when a specific group is selected
+    // specific group filter panel
     if (gFilter !== 'all' && !filtersOpen) {
       filtersOpen = true;
       filterPanel.style.display = 'contents';
@@ -2854,7 +2854,7 @@ function initPotd() {
   // daily change
   const today = new Date();
   const seed = today.getFullYear() * 10000 + (today.getMonth()+1) * 100 + today.getDate();
-  // species pic + img
+  // species + pic 
   const eligible = SPECIES.filter(s => s.imgs.length > 0 && s.obs >= 5);
   const idx = seed % eligible.length;
   const s = eligible[idx];
@@ -2878,7 +2878,7 @@ function initPotd() {
   document.getElementById('potdBtn').onclick = (e) => { e.stopPropagation(); openDetail(s); };
 }
 
-// init
+// init potd
 initPotd();
 applyAll();
 
@@ -2911,7 +2911,7 @@ async function initNatureQuote() {
   }
 }
 
-// initialize
+// init quote
 initNatureQuote();
 
 // amot table
@@ -2973,8 +2973,8 @@ function sortAmot(key) {
   filterAmot();
 }
 
-// Init AMOT
+// init amot
 renderAmot(AMOT);
-   
+</script>
 </body>
 </html>
