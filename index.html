@@ -3,10 +3,16 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="A digital archive of Guam's plant and fungi biodiversity, powered by community iNaturalist observations. Browse 1,500+ species with filters for flower color, leaf shape, size, habitat, and more.">
+<meta name="theme-color" content="#2a5c20">
+<meta property="og:title" content="Guam Flora & Fungi · Field Guide">
+<meta property="og:description" content="Browse and identify 1,500+ plant and fungi species observed on Guam. Community-driven field guide by DPRS Botanical and Mycological Society.">
+<meta property="og:image" content="https://i.ibb.co/sphHdgwH/dprs.png">
+<meta property="og:type" content="website">
 <title>Guam Flora & Fungi · Field Guide</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&family=DM+Sans:ital,opsz,wght@0,9..40,200..700;1,9..40,200..700&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
@@ -112,6 +118,34 @@ header{
   background:var(--card);border:1px solid var(--border);
   border-radius:12px;padding:3px 11px;white-space:nowrap;
 }
+
+/* extended filter rows */
+.toolbar-row{
+  width:100%;display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;
+  padding-top:.45rem;border-top:1px solid var(--border);margin-top:.1rem;
+}
+.filter-select{
+  background:var(--card);border:1px solid var(--border);border-radius:7px;
+  padding:4px 8px;font-family:'DM Sans',sans-serif;font-size:.78rem;
+  color:var(--ink2);cursor:pointer;outline:none;
+}
+.filter-select:focus{border-color:var(--green);}
+.active-filters{
+  display:flex;gap:5px;flex-wrap:wrap;align-items:center;
+  width:100%;padding-top:.3rem;
+}
+.af-chip{
+  display:inline-flex;align-items:center;gap:4px;
+  background:var(--green);color:#f2ede4;
+  font-size:.65rem;font-weight:500;letter-spacing:.04em;
+  padding:2px 8px 2px 9px;border-radius:12px;
+  cursor:pointer;transition:background .15s;
+}
+.af-chip.eco{background:#5a7a3a;}
+.af-chip.village{background:#2b463c;}
+.af-chip.habit{background:#688f4e;}
+.af-chip:hover{opacity:.8;}
+.af-chip-x{font-size:.8rem;line-height:1;margin-left:1px;}
 
 /* main view */
 #viewGrid{display:block;}
@@ -374,7 +408,19 @@ header{
   .toolbar {
     padding: 0.5rem 0.75rem !important;
     gap: 0.3rem !important;
-    top: 105px; 
+    top: 105px;
+  }
+  .toolbar-row {
+    gap: 0.4rem;
+  }
+  .filter-select {
+    font-size: 0.72rem !important;
+    padding: 3px 5px !important;
+    max-width: 130px;
+  }
+  .af-chip {
+    font-size: .6rem;
+  }
   }
 
   .tab {
@@ -523,6 +569,16 @@ img { border: 1px solid #2b463c !important; }
 /* no-results */
 #noResults .nr-h { font-family: 'DM Sans', sans-serif !important; }
 
+/* trait badges on cards */
+.card-badges {
+  display: flex; gap: 4px; flex-wrap: wrap; margin-top: 5px;
+}
+.trait-badge {
+  font-size: .58rem; font-weight: 500; letter-spacing: .05em;
+  padding: 2px 6px; border-radius: 8px; white-space: nowrap;
+  text-transform: capitalize;
+}
+
 /* amot table style */
 .amot-section {
   max-width: 900px; margin: 0 auto; padding: 1.5rem;
@@ -584,7 +640,7 @@ img { border: 1px solid #2b463c !important; }
 </head>
 <body>
 
-<!-- header -->
+/* header */
 <header>
   <img src="https://i.ibb.co/sphHdgwH/dprs.png" alt="DPRS" style="height:38px;width:38px;object-fit:contain;flex-shrink:0;border:1px solid rgba(255,255,255,.5)">
   <div class="h-brand">
@@ -608,8 +664,9 @@ img { border: 1px solid #2b463c !important; }
   </div>
 </header>
 
-<!-- toolbar -->
+/* toolbar */
 <div class="toolbar">
+  <!-- row 1: group + type + sort + count -->
   <span class="filter-label">Group</span>
   <div class="filter-row" id="groupTabs">
     <button class="tab active" data-g="all">All</button>
@@ -629,6 +686,123 @@ img { border: 1px solid #2b463c !important; }
     </select>
   </div>
   <span class="count-pill" id="countPill">— species</span>
+
+  <!-- row 2: instant id -->
+  <div class="toolbar-row">
+    <span class="filter-label">Flower color</span>
+    <select id="colorFilter" class="filter-select">
+      <option value="all">Any color</option>
+      <option value="white">White</option>
+      <option value="yellow">Yellow</option>
+      <option value="pink">Pink</option>
+      <option value="red">Red</option>
+      <option value="purple">Purple / Violet</option>
+      <option value="blue">Blue</option>
+      <option value="orange">Orange</option>
+      <option value="green">Green / Inconspicuous</option>
+    </select>
+    <div class="sep"></div>
+    <span class="filter-label">Leaf shape</span>
+    <select id="leafFilter" class="filter-select">
+      <option value="all">Any shape</option>
+      <option value="broad-oval">Broad / Oval</option>
+      <option value="lance">Lanceolate / Narrow</option>
+      <option value="lobed">Lobed / Palmate</option>
+      <option value="compound">Compound / Pinnate</option>
+      <option value="heart">Heart-shaped</option>
+      <option value="linear">Linear / Grass-like</option>
+      <option value="scale">Scale / Reduced</option>
+    </select>
+    <div class="sep"></div>
+    <span class="filter-label">Size</span>
+    <select id="sizeFilter" class="filter-select">
+      <option value="all">Any size</option>
+      <option value="small">Small (under 1 m)</option>
+      <option value="medium">Medium (1–5 m)</option>
+      <option value="tall">Tall (over 5 m)</option>
+    </select>
+    <div class="sep"></div>
+    <span class="filter-label">Growth habit</span>
+    <select id="habitFilter" class="filter-select">
+      <option value="all">Any habit</option>
+      <option value="tree">Tree</option>
+      <option value="shrub">Shrub</option>
+      <option value="grass">Grass / Sedge</option>
+      <option value="herb">Herb / Forb</option>
+      <option value="vine">Vine / Climber</option>
+      <option value="fern">Fern / Fern-ally</option>
+      <option value="epiphyte">Epiphyte</option>
+      <option value="fungi">Fungi / Lichen</option>
+    </select>
+  </div>
+
+  <!-- row 2b: fungi-specific filters -->
+  <div class="toolbar-row" id="fungiFilterRow" style="display:none;">
+    <span class="filter-label">Fungi color</span>
+    <select id="fungiColorFilter" class="filter-select">
+      <option value="all">Any color</option>
+      <option value="white">White / Cream</option>
+      <option value="brown">Brown / Tan</option>
+      <option value="red">Red / Orange</option>
+      <option value="yellow">Yellow</option>
+      <option value="gray">Gray / Black</option>
+      <option value="purple">Purple / Violet</option>
+      <option value="green">Green</option>
+    </select>
+    <div class="sep"></div>
+    <span class="filter-label">Fungi shape</span>
+    <select id="fungiShapeFilter" class="filter-select">
+      <option value="all">Any shape</option>
+      <option value="cap">Cap / Gilled</option>
+      <option value="bracket">Bracket / Shelf</option>
+      <option value="cup">Cup / Sac</option>
+      <option value="puffball">Puffball / Earthstar</option>
+      <option value="stinkhorn">Stinkhorn</option>
+      <option value="jelly">Jelly / Ear</option>
+      <option value="crust">Crust / Lichen</option>
+    </select>
+  </div>
+
+  <!-- row 3: ecosystem + village -->
+  <div class="toolbar-row">
+    <span class="filter-label">Ecosystem</span>
+    <select id="ecoFilter" class="filter-select">
+      <option value="all">Any ecosystem</option>
+      <option value="limestone">Limestone Forest</option>
+      <option value="savanna">Savanna / Volcanic Soil</option>
+      <option value="coastal">Coastal &amp; Strand</option>
+      <option value="ravine">Ravine Forest</option>
+    </select>
+    <div class="sep"></div>
+    <span class="filter-label">Village</span>
+    <select id="villageFilter" class="filter-select">
+      <option value="all">Any village</option>
+      <option value="Agana Heights">Agana Heights</option>
+      <option value="Agat">Agat</option>
+      <option value="Asan-Maina">Asan-Maina</option>
+      <option value="Barrigada">Barrigada</option>
+      <option value="Chalan Pago-Ordot">Chalan Pago-Ordot</option>
+      <option value="Dededo">Dededo</option>
+      <option value="Hagåtña">Hagåtña</option>
+      <option value="Inarajan">Inarajan</option>
+      <option value="Mangilao">Mangilao</option>
+      <option value="Merizo">Merizo</option>
+      <option value="Mongmong-Toto-Maite">Mongmong-Toto-Maite</option>
+      <option value="Piti">Piti</option>
+      <option value="Santa Rita">Santa Rita</option>
+      <option value="Sinajana">Sinajana</option>
+      <option value="Talo'fo'fo'">Talo'fo'fo'</option>
+      <option value="Tamuning-Tumon-Harmon">Tamuning-Tumon-Harmon</option>
+      <option value="Umatac">Umatac</option>
+      <option value="Yigo">Yigo</option>
+      <option value="Yona">Yona</option>
+    </select>
+    <div class="sep"></div>
+    <button id="clearFiltersBtn" class="tab" style="border-color:#b1d182;color:#2b463c;font-size:.65rem;padding:3px 10px;">Clear all filters</button>
+  </div>
+
+  <!-- active filter chips -->
+  <div class="active-filters" id="activeFilters" style="display:none;"></div>
 </div>
 
 <!-- grid view -->
@@ -641,7 +815,7 @@ img { border: 1px solid #2b463c !important; }
     <div style="background:var(--card);border:1px solid var(--border);border-radius:0;padding:22px 26px;display:flex;flex-direction:column;justify-content:center;">
       <div style="font-size:.62rem;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-bottom:8px;">About this repository</div>
       <div style="font-family:'Playfair Display',serif;font-size:1.15rem;font-weight:700;color:var(--ink);margin-bottom:10px;line-height:1.3;">Welcome to the Official DPRS Botanical and Mycological Repository!</div>
-      <p style="font-size:.83rem;color:var(--ink2);line-height:1.7;margin:0;">Here, we have created a digital archive of the vibrant flora and fungi that define Guam's ecosystem. This archive pulls from community-driven observations on iNaturalist into an accessible guide for any person interested in learning about Guam's biodiversity. Whether you are an avid hiker, a student, or a curious neighbor, this resource is designed to help you identify, understand, and protect the unique species that share our island home. Enjoy your stay! <code>(^_^)</code>
+      <p style="font-size:.83rem;color:var(--ink2);line-height:1.7;margin:0;">Here, we have created a digital archive of the vibrant flora and fungi that define Guam's ecosystem. This archive pulls from community-driven observations via iNaturalist and GBIF databases into an accessible guide for any person interested in learning about Guam's biodiversity. Whether you are an avid hiker, a student, or a curious neighbor, this resource is designed to help you identify, understand, and protect the unique species that share our island home. Enjoy your stay! <code>(^_^)</code>
   </p>
 
   <!-- inaturalist -->
@@ -746,7 +920,7 @@ img { border: 1px solid #2b463c !important; }
   <!-- amot table -->
   <div id="rtAmot" style="display:none">
     <div class="res-section-title" style="margin-bottom:.3rem">Table List of Traditional Medicinal Plants (Åmot)</div>
-    <div class="res-section-sub">The suruhånu and suruhåna are natural healers who use a variety of plants and natural materials such as roots or leaves to treat a range of ailments. These plants may be taken from around their homes or from the hålomtåno' (jungle). Their techniques include specially formulated herbal drinks or rubbing on a special palai (ointment). Here is a list of over 70 traditional medicinal plants used and the ailments they are able to treat. Sources: Guampedia</div>
+    <div class="res-section-sub">The suruhånu and suruhåna are natural healers who use a variety of plants and natural materials such as roots or leaves to treat a range of ailments. These plants may be taken from around their homes or from the hålomtåno' (jungle). Their techniques include specially formulated herbal drinks or rubbing on a special palai (ointment). Here is a list of over 70 traditional medicinal plants used and the ailments they are able to treat. Sources: Guampedia Manglona, Lourdes Toves. <i>Tinanom Åmot Siha: Plants Used in Traditional CHamoru Healing.</i> Mangilao: University of Guam Press, 2025.</div>
     <div class="amot-controls">
       <input class="amot-search" type="text" id="amot-search" placeholder="Search by CHamoru name, scientific name, or use..." oninput="filterAmot()">
       <span id="amot-count"></span>
@@ -785,13 +959,987 @@ const SPECIES = [{"sn": "Cocos nucifera", "cn": "coconut palm", "group": "Planta
 
 // state
 let gFilter = 'all', taxFilter = 'all', sortBy = 'obs', query = '';
+let colorFilter = 'all', leafFilter = 'all', sizeFilter = 'all', habitFilter = 'all', ecoFilter = 'all', villageFilter = 'all';
+let fungiColorFilter = 'all', fungiShapeFilter = 'all';
 let filtered = [], shown = 0;
 const PAGE = 60;
 let currentView = 'grid';
 let leafletMap = null, markerLayer = null;
 let detailMiniMap = null;
 
-// taxonomy group
+// lookup tables
+// Flower color + scientific name (partial/genus matches supplemented below)
+const FLOWER_COLOR = {
+  // White
+  'Scaevola taccada':'white','Bikkia tetrandra':'white','Plumeria obtusa':'white',
+  'Plumeria pudica':'white','Barringtonia asiatica':'white','Guettarda speciosa':'white',
+  'Bidens alba':'white','Hibiscus tiliaceus':'white','Cordia subcordata':'white',
+  'Morinda citrifolia':'white','Tabernaemontana pandacaqui':'white','Tabernaemontana divaricata':'white',
+  'Ixora coccinea':'red','Volkameria inermis':'white','Tridax procumbens':'white',
+  'Cocos nucifera':'white','Bidens pilosa':'white','Leucaena leucocephala':'white',
+  'Colubrina asiatica':'white','Sophora tomentosa':'yellow','Faboideae':'white',
+  'Schleinitzia fosbergii':'white','Ochrosia oppositifolia':'white',
+  'Catharanthus roseus':'pink','Hymenocallis littoralis':'white',
+  'Melia azedarach':'purple','Gardenia jasminoides':'white',
+  'Nerium oleander':'pink','Jasminum marianum':'white','Arundina graminifolia':'pink',
+  'Calanthe triplicata':'white','Nervilia concolor':'white',
+  'Thespesia populnea':'yellow',
+  'Premna serratifolia':'white',
+  'Calophyllum inophyllum':'white','Cynometra ramiflora':'white',
+  'Cerbera odollam':'white','Ochrosia':'white','Timonius nitidus':'white',
+  'Psychotria mariana':'white','Psychotria hombroniana':'white',
+  'Aidia cochinchinensis':'white','Aglaia mariannensis':'white',
+  'Decaspermum fruticosum':'white','Eugenia reinwardtiana':'white',
+  'Eugenia bryanii':'white','Syzygium thompsonii':'white',
+  'Discocalyx megacarpa':'white','Merrilliodendron megacarpum':'white',
+  'Paratrophis pendulina':'white','Drypetes dolichocarpa':'white',
+  'Meiogyne cylindrocarpa':'white','Polyscias macgillivrayi':'white',
+  'Tristiropsis acutangula':'white','Planchonella obovata':'white',
+  'Gymnosporia thompsonii':'white','Macaranga thompsonii':'white',
+  'Pisonia grandis':'white','Maesa walkeri':'white',
+  'Geniostoma rupestre':'white','Allophylus timoriensis':'white',
+  'Capparis mariana':'white','Piper guahamense':'white',
+  'Elatostema calcareum':'white','Procris pedunculata':'white',
+  'Ficus microcarpa':'green','Ficus prolixa':'green','Ficus tinctoria':'green',
+  'Artocarpus altilis':'green','Artocarpus mariannensis':'green',
+  'Casuarina equisetifolia':'green',
+  'Averrhoa bilimbi':'red','Averrhoa carambola':'red',
+  'Barringtonia racemosa':'pink','Hernandia nymphaeifolia':'white',
+  'Hernandia sonora':'white','Lumnitzera littorea':'red',
+  'Rhizophora stylosa':'white','Avicennia marina':'white',
+  'Heritiera longipetiolata':'white','Terminalia catappa':'white',
+  'Fagraea berteroana':'yellow','Codiaeum variegatum':'green',
+  'Freycinetia reineckei':'white','Flagellaria indica':'white',
+  'Pilea microphylla':'green','Adonidia merrillii':'white',
+  'Asplenium nidus':'green','Microsorum scolopendria':'green',
+  'Pyrrosia lanceolata':'green','Dicranopteris linearis':'green',
+  'Nephrolepis':'green','Davallia solida':'green',
+  'Christella':'green','Tectaria crenata':'green',
+  'Palhinhaea cernua':'green','Angiopteris evecta':'green',
+  'Medinilla medinillana':'pink','Callicarpa candicans':'pink',
+  'Taeniophyllum marianense':'yellow','Dendrobium guamense':'white',
+  'Bulbophyllum guamense':'yellow','Coelogyne guamensis':'white',
+  'Zeuxine fritzii':'white','Phreatia micrantha':'white',
+  'Tuberolabium guamense':'white','Nervilia jacksoniae':'white',
+  'Nervilia platychila':'white',
+  // Yellow
+  'Turnera ulmifolia':'yellow','Delonix regia':'yellow','Cassia fistula':'yellow',
+  'Allamanda cathartica':'yellow','Senna alata':'yellow','Senna surattensis':'yellow',
+  'Waltheria indica':'yellow','Stylosanthes hamata':'yellow',
+  'Peltophorum pterocarpum':'yellow','Tecoma stans':'yellow',
+  'Turnera':'yellow','Stylosanthes guianensis':'yellow',
+  'Mecardonia procumbens':'yellow','Momordica charantia':'yellow',
+  'Senna occidentalis':'yellow','Senna':'yellow',
+  'Cassia':'yellow','Caesalpinia pulcherrima':'orange',
+  'Utricularia bifida':'yellow','Curculigo orchioides':'yellow',
+  'Hedyotis megalantha':'white','Ximenia americana':'yellow',
+  'Chrysophyllum cainito':'white','Manilkara zapota':'white',
+  'Samanea saman':'pink','Pterocarpus indicus':'yellow',
+  'Swietenia macrophylla':'white',
+  'Annona muricata':'yellow','Annona squamosa':'yellow',
+  'Carica papaya':'white',
+  // Pink / rose
+  'Tabebuia heterophylla':'pink','Plumeria rubra':'pink',
+  'Melastoma malabathricum':'pink','Melastoma malabathricum mariannum':'pink',
+  'Antigonon leptopus':'pink','Zephyranthes carinata':'pink',
+  'Zephyranthes':'pink','Murraya paniculata':'white',
+  'Oldenlandia corymbosa':'pink','Boerhavia':'pink',
+  'Ipomoea aquatica':'pink','Ipomoea nil':'blue',
+  'Ipomoea batatas':'purple','Ipomoea quamoclit':'red',
+  'Ipomoea cairica':'purple','Ipomoea obscura':'white',
+  'Zephyranthes rosea':'pink','Heliconia':'orange',
+  'Adenium obesum':'pink',
+  'Tabebuia rosea':'pink','Tabebuia aurea':'yellow',
+  'Bauhinia monandra':'pink','Bauhinia purpurea':'purple',
+  'Calotropis gigantea':'purple','Alpinia purpurata':'red',
+  'Heliconia rostrata':'red','Heliconia bihai':'red',
+  'Lagerstroemia indica':'pink','Lagerstroemia speciosa':'pink',
+  'Lagerstroemia':'pink','Mussaenda':'pink',
+  'Nymphaea':'pink','Nymphaea nouchali':'blue',
+  // Red / orange
+  'Jatropha integerrima':'red','Ixora triantha':'red','Russelia equisetiformis':'red',
+  'Ixora casei':'red','Hibiscus × archeri':'red','Hibiscus × rosa-sinensis':'red',
+  'Cordia sebestena':'orange','Spathodea campanulata':'orange',
+  'Erythrina variegata':'red','Asclepias curassavica':'orange',
+  'Costus woodsonii':'red',
+  'Ixora':'red',
+  'Lantana camara':'orange','Salvia':'red',
+  'Hamelia patens':'red','Hamelia':'red',
+  'Heliconia psittacorum':'orange',
+  'Acalypha hispida':'red',
+  'Costus':'red','Russelia':'red',
+  'Callistemon':'red','Punica granatum':'red',
+  'Sanchezia parvibracteata':'yellow',
+  // Purple / violet
+  'Ruellia ciliatiflora':'purple','Ruellia prostrata':'purple','Ruellia simplex':'purple',
+  'Ruellia tuberosa':'purple','Ruellia blechum':'purple','Ruellia nudiflora':'purple',
+  'Ruellia':'purple',
+  'Stachytarpheta cayennensis':'purple','Stachytarpheta urticifolia':'purple',
+  'Stachytarpheta':'purple','Bougainvillea':'purple','Bougainvillea spectabilis':'purple',
+  'Bougainvillea glabra':'purple','Spathoglottis plicata':'purple',
+  'Ipomoea indica':'purple','Clerodendrum quadriloculare':'purple',
+  'Clitoria ternatea':'blue',
+  'Thunbergia grandiflora':'blue','Thunbergia erecta':'purple',
+  'Utricularia caerulea':'blue','Buchnera floridana':'purple',
+  'Macroptilium atropurpureum':'purple',
+  'Cleome rutidosperma':'purple','Allamanda blanchetii':'purple',
+  'Stachytarpheta jamaicensis':'blue','Cyanthillium cinereum':'purple',
+  'Chromolaena odorata':'purple',
+  'Duranta erecta':'purple','Plumbago zeylanica':'blue',
+  'Mirabilis':'pink','Verbena':'purple',
+  'Strobilanthes reptans':'purple','Thunbergia laurifolia':'blue',
+  'Passiflora vesicaria':'purple','Passiflora foetida':'purple',
+  'Passiflora pallida':'white','Passiflora suberosa':'white',
+  'Ipomoea triloba':'purple',
+  // Blue
+  // Green / inconspicuous
+  'Poaceae':'green','Cyperaceae':'green','Ficus':'green','Pandanus tectorius':'green',
+  'Pandanus dubius':'green','Arecaceae':'green',
+  'Cyperus':'green','Fimbristylis':'green','Scleria':'green',
+  'Pandanus':'green','Bambusa vulgaris':'green','Flagellaria':'green',
+  'Epipremnum aureum':'green','Syngonium podophyllum':'green',
+  'Epipremnum pinnatum':'green','Tradescantia spathacea':'white',
+  // Additional coverage for high-obs species
+  'Polytrias indica':'green','Cycas micronesica':'green','Phyllanthus saffordii':'green',
+  'Phyllanthus mariannensis':'green','Bothriochloa pertusa':'green',
+  'Mimosa pudica':'pink','Ipomoea pes-caprae':'pink','Triphasia trifolia':'white',
+  'Sphagneticola trilobata':'yellow','Pemphis acidula':'white',
+  'Heliotropium arboreum':'white','Intsia bijuga':'white',
+  'Euphorbia cyathophora':'red','Asteraceae':'yellow',
+  'Andropogoneae':'green','Euphorbia hirta':'white','Phyllanthus amarus':'green',
+  'Rivina humilis':'white','Mucuna gigantea':'yellow','Melochia villosissima':'pink',
+  'Myrtella bennigseniana':'white','Bidens':'yellow','Wikstroemia elliptica':'yellow',
+  'Elaeocarpus joga':'white','Chrysopogon aciculatus':'green',
+  'Mammea odorata':'white','Polypodiopsida':'green',
+  'Agaricales':'brown',
+  'Trametes':'brown','Polyporales':'brown','Lentinus':'brown',
+  'Phallus indusiatus':'white','Xylaria':'gray',
+  'Auricularia':'brown','Ganoderma':'brown',
+  'Marasmius haematocephalus':'red','Dacrymyces spathularia':'yellow',
+  'Lycoperdaceae':'brown','Geastrum':'brown','Mycena':'white',
+  'Leucocoprinus birnbaumii':'yellow','Schizophyllum commune':'white',
+  // Final coverage batch - flower colors
+  'Hibiscus':'pink','Alysicarpus vaginalis':'pink','Hyptis capitata':'purple',
+  'Caulerpa racemosa':'green','Acacia auriculiformis':'yellow',
+  'Pipturus argenteus':'white','Fabaceae':'purple','Youngia japonica':'yellow',
+  'Hippobroma longiflora':'white','Asystasia gangetica':'purple',
+  'Melanolepis multiglandulosa':'white','Crotalaria retusa':'yellow',
+  'Wollastonia biflora':'yellow','Mikania micrantha':'white','Phyla nodiflora':'white',
+  'Cenchrus echinatus':'green','Bryophyta':'green','Asteroideae':'yellow',
+  'Tacca leontopetaloides':'green','Bothriochloa':'green','Phyllanthus marianus':'green',
+  'Senega paniculata':'white','Acalypha indica':'green','Vitex parviflora':'purple',
+  'Asplenium polyodon':'green',
+  'Eulophia picta':'yellow',
+  'Sansevieria trifasciata':'white','Dracaena fragrans':'white',
+  'Cordyline fruticosa':'white',
+  'Agaricomycetes':'brown','Gynochthodes umbellata':'white',
+  'Dendrocnide latifolia':'white','Telosma procumbens':'yellow',
+  'Cassytha filiformis':'green','Psidium guajava':'white',
+  'Microsorum punctatum':'green','Acalypha wilkesiana':'green',
+  'Moringa oleifera':'white','Muntingia calabura':'white',
+  'Lygodium microphyllum':'green','Euphorbia hypericifolia':'white',
+  'Rhodophyta':'red','Alocasia macrorrhizos':'white','Euphorbia heterophylla':'red',
+  'Urena lobata':'pink','Pteris tripartita':'green','Poales':'green',
+  'Flemingia strobilifera':'yellow','Amaranthus viridis':'green',
+  'Chloris barbata':'green','Abrus precatorius':'purple',
+  'Coleus scutellarioides':'purple','Cestrum diurnum':'white',
+  'Alysicarpus':'pink','Canavalia rosea':'pink','Sporobolus indicus':'green',
+  'Eugenia palumbis':'white','Crotalaria':'yellow','Neustanthus phaseoloides':'purple',
+  'Cenchrus purpureus':'green','Peperomia mariannensis':'white',
+  'Abutilon indicum':'yellow','Rubiaceae':'white','Mangifera indica':'white',
+  'Adiantum tenerum':'green','Selenicereus undatus':'white',
+  'Freycinetia':'white',
+  'Adonidia':'white',
+  // Targeted additions for remaining gap
+  'Ipomoea':'purple','Lecanoromycetes':'gray','Dieffenbachia seguine':'green',
+  'Spermacoce remota':'white','Artocarpus':'green','Eugenia':'white',
+  'Pteris vittata':'green','Portulaca oleracea':'yellow','Eleusine indica':'green',
+  'Citrus':'white','Hellenia speciosa':'white','Pluchea indica':'purple',
+  'Nypa fruticans':'green','Plumeria':'white','Psilotum nudum':'green',
+  'Dactyloctenium aegyptium':'green','Musa':'red','Amblovenatum opulentum':'green',
+  'Malvastrum coromandelianum':'yellow','Dischidia puberula':'white',
+  'Pithecellobium dulce':'white','Dracaena reflexa':'white','Euploca procumbens':'white',
+  'Hedyotis laciniata':'white','Phallus':'brown','Polyporaceae':'brown',
+  'Saccharum spontaneum':'green','Chlorophyta':'green',
+  'Halimeda':'green','Amphiroa':'green',
+  'Nervilia':'white',
+};
+
+// Leaf shape keyed by scientific name
+const LEAF_SHAPE = {
+  // Broad / oval
+  'Cocos nucifera':'linear','Artocarpus altilis':'lobed','Artocarpus mariannensis':'broad-oval',
+  'Carica papaya':'lobed','Hibiscus tiliaceus':'heart','Barringtonia asiatica':'broad-oval',
+  'Morinda citrifolia':'broad-oval','Ficus prolixa':'broad-oval','Ficus':'broad-oval',
+  'Plumeria obtusa':'broad-oval','Calophyllum inophyllum':'broad-oval',
+  'Scaevola taccada':'broad-oval','Guettarda speciosa':'broad-oval',
+  'Thespesia populnea':'heart','Heritiera longipetiolata':'broad-oval',
+  'Hernandia nymphaeifolia':'heart','Premna serratifolia':'broad-oval',
+  'Terminalia catappa':'broad-oval','Ochrosia oppositifolia':'broad-oval',
+  'Meiogyne cylindrocarpa':'broad-oval','Elaeocarpus joga':'broad-oval',
+  'Cycas micronesica':'compound','Cycas revoluta':'compound',
+  'Pandanus tectorius':'linear','Pandanus dubius':'linear',
+  'Cordia subcordata':'broad-oval',
+  'Cordia sebestena':'broad-oval','Cerbera odollam':'broad-oval',
+  'Ochrosia mariannensis':'broad-oval','Planchonella obovata':'broad-oval',
+  'Eugenia reinwardtiana':'broad-oval','Eugenia bryanii':'broad-oval',
+  'Syzygium thompsonii':'broad-oval','Discocalyx megacarpa':'broad-oval',
+  'Aglaia mariannensis':'compound','Drypetes dolichocarpa':'broad-oval',
+  'Timonius nitidus':'broad-oval','Aidia cochinchinensis':'broad-oval',
+  'Macaranga thompsonii':'broad-oval','Polyscias macgillivrayi':'compound',
+  'Tristiropsis acutangula':'compound','Gymnosporia thompsonii':'broad-oval',
+  'Pisonia grandis':'broad-oval','Paratrophis pendulina':'broad-oval',
+  'Psychotria mariana':'broad-oval','Merrilliodendron megacarpum':'broad-oval',
+  'Geniostoma rupestre':'broad-oval','Allophylus timoriensis':'compound',
+  'Maesa walkeri':'broad-oval','Medinilla medinillana':'broad-oval',
+  'Capparis mariana':'broad-oval','Piper guahamense':'heart',
+  'Procris pedunculata':'broad-oval',
+  'Volkameria inermis':'broad-oval','Tabernaemontana pandacaqui':'broad-oval',
+  'Tabernaemontana divaricata':'broad-oval','Catharanthus roseus':'broad-oval',
+  'Nerium oleander':'lance','Adenium obesum':'broad-oval',
+  'Hibiscus':'lobed','Hibiscus × rosa-sinensis':'lobed',
+  'Mangifera indica':'lance','Mangifera':'lance',
+  'Ficus tinctoria':'broad-oval','Ficus microcarpa':'broad-oval',
+  'Ficus elastica':'broad-oval','Artocarpus':'broad-oval',
+  'Breadfruit':'lobed','Melia azedarach':'compound','Swietenia macrophylla':'compound',
+  'Samanea saman':'compound',
+  'Pterocarpus indicus':'compound','Erythrina variegata':'compound',
+  'Barringtonia racemosa':'broad-oval',
+  'Heritiera littoralis':'broad-oval',
+  'Hernandia sonora':'heart','Lumnitzera littorea':'broad-oval',
+  'Rhizophora stylosa':'broad-oval','Avicennia marina':'lance',
+  'Plumeria rubra':'broad-oval','Plumeria pudica':'lance',
+  'Tabebuia heterophylla':'compound','Tabebuia rosea':'compound',
+  'Tabebuia aurea':'compound','Spathodea campanulata':'compound',
+  'Peltophorum pterocarpum':'compound','Delonix regia':'compound',
+  'Lagerstroemia indica':'broad-oval','Lagerstroemia speciosa':'broad-oval',
+  'Moringa oleifera':'compound','Annona muricata':'broad-oval',
+  'Annona squamosa':'broad-oval','Annona reticulata':'broad-oval',
+  'Averrhoa bilimbi':'compound','Averrhoa carambola':'compound',
+  'Psidium guajava':'broad-oval','Musa':'broad-oval','Musa × paradisiaca':'broad-oval',
+  'Chrysophyllum cainito':'broad-oval','Manilkara zapota':'broad-oval',
+  'Codiaeum variegatum':'lobed',
+  'Coleus scutellarioides':'broad-oval','Coleus':'broad-oval',
+  'Tradescantia spathacea':'lance','Epipremnum aureum':'heart',
+  'Syngonium podophyllum':'lobed','Epipremnum pinnatum':'lobed',
+  'Alocasia macrorrhizos':'heart','Caladium bicolor':'heart',
+  'Dieffenbachia seguine':'broad-oval',
+  // Lanceolate / narrow
+  'Dianella saffordiana':'linear','Stachytarpheta jamaicensis':'lance',
+  'Pemphis acidula':'lance','Leucaena leucocephala':'compound',
+  'Intsia bijuga':'compound','Cynometra ramiflora':'compound',
+  'Heliotropium arboreum':'lance','Casuarina equisetifolia':'linear',
+  'Vitex parviflora':'compound',
+  'Wikstroemia elliptica':'lance','Decaspermum fruticosum':'lance',
+  'Myrtella bennigseniana':'lance',
+  'Sansevieria trifasciata':'linear',
+  'Sansevieria':'linear','Cordyline fruticosa':'lance',
+  'Dracaena fragrans':'lance','Dracaena reflexa':'lance',
+  'Hymenocallis littoralis':'linear',
+  'Crinum asiaticum':'linear','Stachytarpheta':'lance',
+  'Chromolaena odorata':'lance','Mikania micrantha':'heart',
+  'Chromolaena':'lance','Melastoma malabathricum':'lance',
+  'Sphagneticola trilobata':'lance','Callicarpa candicans':'lance',
+  // Lobed / palmate
+  'Passiflora vesicaria':'lobed','Passiflora foetida':'lobed',
+  'Passiflora pallida':'lobed','Ipomoea pes-caprae':'heart',
+  'Urena lobata':'lobed',
+  'Macaranga':'lobed',
+  // Compound / pinnate
+  'Cassia fistula':'compound',
+  'Senna alata':'compound','Mimosa pudica':'compound',
+  'Tamarindus indica':'compound',
+  'Vitex trifolia':'compound','Melochia villosissima':'broad-oval',
+  'Microsorum scolopendria':'broad-oval',
+  // Heart-shaped
+  // Linear / grass-like
+  'Poaceae':'linear','Bothriochloa pertusa':'linear','Polytrias indica':'linear',
+  'Chrysopogon aciculatus':'linear','Panicum':'linear','Andropogoneae':'linear',
+  'Fimbristylis cymosa':'linear','Cyperus mindorensis':'linear',
+  'Miscanthus floridulus':'linear',
+  'Saccharum spontaneum':'linear',
+  'Cyperus':'linear','Fimbristylis':'linear','Scleria':'linear',
+  'Bambusa vulgaris':'linear','Flagellaria indica':'linear',
+  'Phragmites karka':'linear','Arundina graminifolia':'linear',
+  'Spathoglottis plicata':'linear','Arundina':'linear',
+  'Calanthe triplicata':'broad-oval','Cymbopogon citratus':'linear',
+  // Scale / reduced
+  'Cassytha filiformis':'scale',
+  'Psilotum nudum':'scale',
+  // Additional entries to reach 80%+ coverage
+  // Broad / oval
+  'Tridax procumbens':'lance','Bidens pilosa':'lance','Bidens alba':'lance',
+  'Bidens':'lance','Turnera ulmifolia':'broad-oval','Ruellia':'broad-oval',
+  'Ruellia prostrata':'broad-oval','Ruellia ciliatiflora':'broad-oval',
+  'Ruellia simplex':'lance','Ruellia tuberosa':'broad-oval',
+  'Phyllanthus saffordii':'compound','Phyllanthus mariannensis':'compound',
+  'Phyllanthus amarus':'compound','Phyllanthus debilis':'compound',
+  'Antigonon leptopus':'heart','Triphasia trifolia':'compound',
+  'Jatropha integerrima':'lobed','Euphorbia cyathophora':'lobed',
+  'Euphorbia hirta':'broad-oval','Asteraceae':'lance',
+  'Bikkia tetrandra':'broad-oval','Colubrina asiatica':'broad-oval',
+  'Mucuna gigantea':'compound',
+  'Taeniophyllum marianense':'scale','Dendrobium guamense':'linear',
+  'Pyrrosia lanceolata':'lance',
+  'Dicranopteris linearis':'compound','Alpinia purpurata':'broad-oval',
+  'Asplenium nidus':'broad-oval','Mammea odorata':'broad-oval',
+  'Bougainvillea':'broad-oval','Bougainvillea spectabilis':'broad-oval',
+  'Bougainvillea glabra':'broad-oval',
+  'Ixora coccinea':'broad-oval','Ixora triantha':'broad-oval','Ixora':'broad-oval',
+  'Strobilanthes reptans':'broad-oval',
+  'Stylosanthes hamata':'compound','Alysicarpus vaginalis':'broad-oval',
+  'Alysicarpus':'broad-oval','Hyptis capitata':'broad-oval',
+  'Acacia auriculiformis':'lance','Acacia mangium':'lance',
+  'Pipturus argenteus':'broad-oval','Fabaceae':'compound',
+  'Youngia japonica':'lobed','Hippobroma longiflora':'lance',
+  'Asystasia gangetica':'broad-oval','Melanolepis multiglandulosa':'broad-oval',
+  'Crotalaria retusa':'compound','Crotalaria':'compound',
+  'Wollastonia biflora':'broad-oval',
+  'Phyla nodiflora':'broad-oval','Flemingia strobilifera':'compound',
+  'Tacca leontopetaloides':'lobed','Bothriochloa':'linear','Phyllanthus marianus':'compound',
+  'Senega paniculata':'compound','Acalypha indica':'broad-oval',
+  'Gynochthodes umbellata':'broad-oval',
+  'Dendrocnide latifolia':'broad-oval','Telosma procumbens':'heart',
+  'Microsorum punctatum':'broad-oval','Acalypha wilkesiana':'broad-oval',
+  'Acalypha':'broad-oval','Ipomoea':'heart','Ipomoea triloba':'lobed',
+  'Muntingia calabura':'broad-oval',
+  'Lygodium microphyllum':'compound','Lygodium auriculatum':'compound',
+  'Euphorbia hypericifolia':'broad-oval',
+  'Poales':'linear','Flemingia':'compound',
+  'Amaranthus viridis':'broad-oval','Chloris barbata':'linear',
+  'Abrus precatorius':'compound',
+  'Cestrum diurnum':'lance','Canavalia rosea':'compound',
+  'Sporobolus indicus':'linear','Eugenia palumbis':'broad-oval',
+  'Neustanthus phaseoloides':'compound','Cenchrus purpureus':'linear',
+  'Peperomia mariannensis':'broad-oval','Abutilon indicum':'lobed',
+  'Rubiaceae':'broad-oval',
+  'Adiantum tenerum':'compound','Selenicereus undatus':'scale',
+  'Agaricomycetes':'scale','Trametes':'scale','Polyporales':'scale',
+  'Lentinus':'scale','Polypodiopsida':'compound',
+  'Rhodophyta':'linear',
+  'Euphorbia heterophylla':'lobed','Pteris tripartita':'compound',
+  'Freycinetia reineckei':'linear',
+  'Adonidia merrillii':'compound','Adonidia':'compound',
+  'Bulbophyllum guamense':'broad-oval',
+  'Coelogyne guamensis':'linear','Calanthe':'broad-oval',
+  'Eulophia picta':'linear','Zeuxine fritzii':'linear',
+  'Nervilia concolor':'heart','Nervilia jacksoniae':'heart',
+  'Dracaena':'lance',
+  'Cordyline':'lance',
+  'Freycinetia':'linear','Pilea microphylla':'broad-oval',
+  'Euphorbia':'broad-oval','Phyllanthus':'compound',
+  'Turnera':'broad-oval','Rivina humilis':'broad-oval',
+  'Mikania':'heart','Macroptilium atropurpureum':'compound',
+  'Macroptilium':'compound','Desmodium':'compound',
+  'Indigofera spicata':'compound','Grona triflora':'compound',
+  'Portulaca oleracea':'broad-oval','Oxalis corniculata':'compound',
+  'Cyanthillium cinereum':'broad-oval','Elephantopus mollis':'broad-oval',
+  'Gomphrena celosioides':'broad-oval','Sesuvium portulacastrum':'linear',
+  'Spermacoce':'lance',
+  'Oldenlandia corymbosa':'lance','Mecardonia procumbens':'broad-oval',
+  'Tradescantia':'broad-oval',
+  'Stachytarpheta urticifolia':'lance',
+  'Asclepias curassavica':'lance','Hippobroma':'lance',
+  'Cenchrus echinatus':'linear','Bryophyta':'scale',
+  'Asteroideae':'lance','Tacca':'lobed',
+  // Final gap-closure entries
+  'Agaricales':'scale','Caulerpa racemosa':'linear',
+  'Davallia solida':'compound','Davallia':'compound',
+  'Phallus indusiatus':'scale','Phallus':'scale',
+  'Asplenium polyodon':'broad-oval','Asplenium':'broad-oval',
+  'Waltheria indica':'broad-oval','Palhinhaea cernua':'linear',
+  'Tuberolabium guamense':'linear','Clerodendrum quadriloculare':'broad-oval',
+  'Xylaria':'scale','Duranta erecta':'lance','Auricularia':'scale',
+  'Ximenia americana':'broad-oval','Nephrolepis':'compound',
+  'Nephrolepis brownii':'compound','Halimeda':'linear',
+  'Tectaria crenata':'compound','Arecaceae':'compound',
+  'Lecanoromycetes':'scale','Elatostema calcareum':'broad-oval',
+  'Jasminum marianum':'compound','Schleinitzia fosbergii':'compound',
+  'Zephyranthes carinata':'linear','Schizophyllum commune':'scale',
+  'Passiflora suberosa':'lobed','Passiflora':'lobed',
+  'Microgramma superficialis':'lance','Lecanora':'scale',
+  'Dendrobium':'linear','Taeniophyllum':'scale',
+  'Epidendrum':'linear','Geodorum recurvum':'broad-oval',
+  'Eulophia':'linear',
+  'Zeuxine':'linear','Nervilia':'heart',
+  // Final 80% push
+  'Eugenia':'broad-oval','Leucocoprinus birnbaumii':'scale',
+  'Pteris vittata':'compound','Eleusine indica':'linear',
+  'Citrus':'compound','Allamanda cathartica':'broad-oval',
+  'Hellenia speciosa':'broad-oval','Lantana camara':'broad-oval',
+  'Pluchea indica':'broad-oval','Momordica charantia':'lobed',
+  'Amphiroa':'linear','Nypa fruticans':'compound','Plumeria':'broad-oval',
+  'Dactyloctenium aegyptium':'linear',
+};
+
+// Plant size: 'small'(<1m), 'medium'(1-5m), 'tall'(>5m)
+const PLANT_SIZE = {
+  tall: [
+    'Cocos nucifera','Artocarpus altilis','Artocarpus mariannensis','Delonix regia',
+    'Calophyllum inophyllum','Intsia bijuga','Barringtonia asiatica','Ficus prolixa',
+    'Swietenia macrophylla','Pterocarpus indicus','Samanea saman','Cynometra ramiflora',
+    'Heritiera longipetiolata','Ochrosia oppositifolia','Ochrosia mariannensis',
+    'Elaeocarpus joga','Hernandia nymphaeifolia','Terminalia catappa','Casuarina equisetifolia',
+    'Spathodea campanulata','Peltophorum pterocarpum','Premna serratifolia',
+    'Cordia subcordata','Syzygium thompsonii','Vitex parviflora','Plumeria obtusa',
+    'Plumeria rubra','Tabebuia heterophylla','Moringa oleifera','Carica papaya',
+    'Psidium guajava','Psidium','Cycas micronesica','Pandanus tectorius',
+    'Pandanus dubius','Melochia villosissima','Meiogyne cylindrocarpa',
+    'Decaspermum fruticosum','Ficus tinctoria','Ficus microcarpa',
+    'Macaranga thompsonii','Erythrina variegata','Mangifera indica',
+    'Colophyllum inophyllum','Gymnosporiaae thompsonii','Planchonella obovata',
+    'Tristiropsis acutangula','Eugenia reinwardtiana','Bikkia tetrandra',
+    'Myrtella bennigseniana','Intsia bijuga','Discocalyx megacarpa',
+    'Polyscias macgillivrayi','Aglaia mariannensis','Drypetes dolichocarpa',
+    'Aidia cochinchinensis','Timonius nitidus','Ochrosia','Guettarda speciosa',
+    'Melia azedarach','Heritiera littoralis','Hernandia sonora','Lumnitzera littorea',
+    'Rhizophora stylosa','Avicennia marina','Barringtonia racemosa',
+    'Terminalia catappa','Samanea saman','Lagerstroemia speciosa',
+    'Fagraea berteroana','Artocarpus','Ficus elastica','Ficus religiosa',
+    'Ficus benghalensis','Mangifera','Annona muricata',
+    'Averrhoa bilimbi','Averrhoa carambola','Chrysophyllum cainito',
+    'Manilkara zapota','Musa','Musa × paradisiaca','Leucaena leucocephala',
+    'Eugenia bryanii','Eugenia palumbis','Gymnosporia thompsonii',
+    'Maesa walkeri','Geniostoma rupestre','Merrilliodendron megacarpum',
+    'Paratrophis pendulina','Pisonia grandis','Xylocarpus',
+    'Hibiscus tiliaceus','Hibiscus','Thespesia populnea',
+    'Tectona grandis','Acacia auriculiformis','Acacia mangium',
+    'Araucaria columnaris','Araucaria heterophylla',
+    'Swietenia','Tabebuia rosea','Tabebuia aurea','Tabebuia',
+    'Cassia fistula','Delonix','Spathodea',
+    // Additional tall trees
+    'Mammea odorata','Ficus','Ficus prolixa','Ficus tinctoria','Ficus microcarpa',
+    'Eugenia palumbis','Eugenia','Syzygium','Psidium',
+    'Piper guahamense',
+  ],
+  medium: [
+    'Hibiscus tiliaceus','Leucaena leucocephala','Scaevola taccada','Morinda citrifolia',
+    'Artocarpus','Heliotropium arboreum','Pemphis acidula','Thespesia populnea',
+    'Bougainvillea','Bougainvillea spectabilis','Plumeria pudica','Wikstroemia elliptica',
+    'Melastoma malabathricum','Premna obtusifolia','Senna alata','Senna surattensis',
+    'Senna occidentalis','Medinilla medinillana','Volkameria inermis',
+    'Tabernaemontana pandacaqui','Cordia sebestena',
+    'Jatropha integerrima','Euphorbia cyathophora','Clerodendrum quadriloculare',
+    // Additional medium shrubs/plants
+    'Antigonon leptopus','Flagellaria indica','Mucuna gigantea',
+    'Freycinetia reineckei','Hymenocallis littoralis','Alpinia purpurata',
+    'Epipremnum aureum','Strobilanthes reptans','Passiflora vesicaria',
+    'Passiflora pallida','Asclepias curassavica','Mikania micrantha',
+    'Arundina graminifolia','Dendrobium guamense','Nervilia concolor',
+    'Ixora','Ixora coccinea','Ixora triantha',
+    'Fabaceae','Fabales',
+    'Cenchrus purpureus','Megathyrsus maximus','Saccharum spontaneum',
+    'Phragmites karka','Bambusa vulgaris',
+    'Asteroideae','Asteraceae',
+    'Passiflora','Bothriochloa',
+    'Pithecellobium dulce','Hellenia speciosa',
+    'Dischidia puberula','Abutilon indicum',
+    // Additional medium-sized missing species
+    'Gynochthodes umbellata','Dendrocnide latifolia',
+    'Telosma procumbens','Cassytha filiformis','Muntingia calabura',
+    'Alocasia macrorrhizos','Psychotria mariana',
+    'Waltheria indica','Clerodendrum quadriloculare','Duranta erecta',
+    'Ximenia americana','Sansevieria trifasciata',
+    'Waltheria indica','Callicarpa candicans','Ixora triantha','Ixora coccinea',
+    'Russelia equisetiformis','Tecoma stans','Stachytarpheta jamaicensis',
+    'Chromolaena odorata','Calotropis gigantea','Cerbera odollam','Thespesia populnea',
+    'Codiaeum variegatum','Tradescantia spathacea','Lantana camara',
+    'Duranta erecta','Melia azedarach','Adonidia merrillii','Adenium obesum',
+    'Acalypha wilkesiana','Cordyline fruticosa','Dracaena fragrans',
+    'Coleus scutellarioides','Pipturus argenteus','Melanolepis multiglandulosa',
+    'Triphasia trifolia','Psidium guajava','Annona squamosa','Annona reticulata',
+    'Hamelia patens','Lagerstroemia indica','Lagerstroemia',
+    'Tabernaemontana divaricata','Catharanthus roseus','Nerium oleander',
+    'Vitex trifolia','Jasminum marianum','Colubrina asiatica',
+    'Acanthophora spicifera',
+  ],
+  small: [
+    'Tridax procumbens','Bidens pilosa','Bidens alba','Mimosa pudica','Sphagneticola trilobata',
+    'Stylosanthes hamata','Ruellia prostrata','Ruellia ciliatiflora','Ruellia simplex',
+    'Phyla nodiflora','Euphorbia hirta','Euphorbia hypericifolia','Asystasia gangetica',
+    'Stachytarpheta cayennensis','Ipomoea pes-caprae','Turnera ulmifolia','Rivina humilis',
+    'Alysicarpus vaginalis','Hyptis capitata','Dianella saffordiana','Hedyotis megalantha',
+    'Chromolaena odorata','Phyllanthus amarus','Phyllanthus saffordii',
+    'Microsorum scolopendria','Asplenium nidus','Dicranopteris linearis','Utricularia caerulea',
+    'Buchnera floridana','Chrysopogon aciculatus','Bothriochloa pertusa',
+    'Fimbristylis cymosa','Cyperus mindorensis','Ipomoea triloba','Passiflora foetida',
+    'Urena lobata','Acalypha indica','Euphorbia prostrata','Portulaca oleracea',
+    'Eleusine indica','Phyllanthus urinaria','Ruellia tuberosa','Catharanthus roseus',
+    'Oxalis corniculata','Indigofera spicata','Grona triflora',
+    'Oldenlandia corymbosa','Stachytarpheta urticifolia','Ruellia nudiflora',
+    'Ruellia blechum','Mecardonia procumbens','Euphorbia chamissonis',
+    'Cyanthillium cinereum','Elephantopus mollis','Gomphrena celosioides',
+    'Euphorbia hirta','Acalypha indica','Spermacoce remota',
+    'Desmodium incanum','Stylosanthes guianensis','Indigofera spicata',
+    'Phyllanthus debilis','Pilea microphylla',
+    'Elatostema calcareum','Procris pedunculata',
+    // Additional small species
+    'Poaceae','Polytrias indica','Andropogoneae','Polypodiopsida',
+    'Caulerpa racemosa','Bulbophyllum guamense','Cenchrus echinatus',
+    'Sansevieria trifasciata','Palhinhaea cernua',
+    'Lygodium microphyllum','Lygodium auriculatum','Lygodium',
+    'Rhodophyta','Calanthe triplicata','Calanthe',
+    'Tuberolabium guamense','Flemingia strobilifera',
+    'Chloris barbata','Eulophia picta','Eulophia',
+    'Zephyranthes carinata','Zephyranthes','Alocasia macrorrhizos',
+    'Poales','Halimeda','Amphiroa',
+    'Agaricales','Trametes','Polyporales','Phallus indusiatus',
+    'Xylaria','Auricularia','Agaricomycetes','Lecanoromycetes','Ramalina',
+    'Schizophyllum commune','Lentinus','Marasmius','Marasmiaceae',
+    'Geastrum','Agaricaceae','Psathyrellaceae','Dacrymyces','Lycoperdaceae',
+    'Mycena','Leucocoprinus birnbaumii','Leucocoprinus','Ganoderma','Amanita',
+    'Gymnopilus','Collema','Usnea','Coprinopsis','Coprinellus',
+    'Davallia solida','Davallia','Asplenium polyodon',
+    'Tectaria crenata','Tectaria','Christella hispidula','Christella',
+    'Phymatosorus grossus','Phymatosorus',
+    'Psilotum nudum','Equisetum ramosissimum',
+    'Thuarea involuta','Lepturus repens','Lepturus',
+    'Digitaria','Fimbristylis','Cyperus','Cyperus rotundus',
+    'Chloris','Dactyloctenium','Dactyloctenium aegyptium',
+    'Eleusine','Sporobolus','Bothriochloa','Saccharum',
+    'Abutilon indicum','Spermacoce remota','Dieffenbachia seguine',
+    'Bidens','Phyllanthus mariannensis','Phyllanthus saffordii',
+    'Ruellia','Asteraceae','Euphorbia cyathophora','Bikkia tetrandra',
+    'Taeniophyllum marianense','Myrtella bennigseniana','Spathoglottis plicata',
+    'Wikstroemia elliptica','Decaspermum fruticosum',
+    'Dicranopteris','Asplenium','Pteris','Microsorum','Nephrolepis','Pyrrosia',
+    'Davallia','Amblovenatum opulentum','Selaginella',
+    'Euphorbia','Phyllanthus','Acalypha','Spermacoce','Desmodium',
+    'Stylosanthes','Indigofera','Alysicarpus','Oxalis',
+    'Utricularia bifida','Utricularia caerulea','Sesuvium portulacastrum',
+    'Wollastonia biflora','Phyla','Mecardonia','Oldenlandia',
+    'Stachytarpheta','Buchnera','Hippobroma longiflora',
+    'Crotalaria retusa','Crotalaria','Macroptilium atropurpureum',
+    'Macroptilium','Ipomoea obscura','Ipomoea','Grona',
+    'Calyptocarpus vialis','Cyanthillium','Elephantopus',
+    'Gomphrena','Amaranthus viridis','Amaranthus',
+    'Youngia japonica','Youngia','Hyptis','Senega paniculata',
+    'Acalypha hispida','Euphorbia hypericifolia',
+    'Tacca leontopetaloides',
+    // Fungi — all small in functional sense
+    'Agaricales','Trametes','Polyporales','Phallus indusiatus',
+    'Xylaria','Auricularia','Agaricomycetes','Lecanoromycetes','Ramalina',
+    'Schizophyllum commune','Lentinus','Trametes sanguinea','Trametes coccinea',
+    'Marasmius haematocephalus','Marasmiaceae','Geastrum','Agaricaceae',
+    'Psathyrellaceae','Dacrymyces spathularia','Lycoperdaceae','Phallus',
+    'Polyporaceae','Mycena','Leucocoprinus birnbaumii','Ganoderma',
+    'Auricularia cornea','Amanita','Gymnopilus','Collema','Usnea',
+    'Coprinopsis lagopus','Leucocoprinus','Coprinellus',
+  ],
+};
+// Build reverse map: sn -> size
+const SIZE_MAP = {};
+Object.entries(PLANT_SIZE).forEach(([sz, list]) => list.forEach(sn => SIZE_MAP[sn] = sz));
+
+// Growth habit
+const HABIT_MAP = {
+  tree: [
+    'Cocos nucifera','Artocarpus altilis','Artocarpus mariannensis','Delonix regia',
+    'Calophyllum inophyllum','Intsia bijuga','Barringtonia asiatica','Ficus prolixa',
+    'Swietenia macrophylla','Pterocarpus indicus','Samanea saman','Cynometra ramiflora',
+    'Heritiera longipetiolata','Ochrosia oppositifolia','Ochrosia mariannensis',
+    'Elaeocarpus joga','Hernandia nymphaeifolia','Terminalia catappa','Casuarina equisetifolia',
+    'Spathodea campanulata','Peltophorum pterocarpum','Premna serratifolia',
+    'Cordia subcordata','Syzygium thompsonii','Vitex parviflora','Plumeria obtusa',
+    'Plumeria rubra','Tabebuia heterophylla','Moringa oleifera','Carica papaya',
+    'Pandanus tectorius','Pandanus dubius','Ficus tinctoria','Ficus microcarpa',
+    'Macaranga thompsonii','Erythrina variegata','Mangifera indica',
+    'Aglaia mariannensis','Drypetes dolichocarpa','Ochrosia','Leucaena leucocephala',
+    'Artocarpus','Melia azedarach','Melochia villosissima','Bikkia tetrandra',
+    'Discocalyx megacarpa','Polyscias macgillivrayi','Timonius nitidus',
+    'Tristiropsis acutangula','Eugenia reinwardtiana','Planchonella obovata',
+    'Morinda citrifolia','Macaranga','Colophyllum','Cerbera odollam',
+  ],
+  shrub: [
+    'Scaevola taccada','Hibiscus tiliaceus','Bougainvillea','Bougainvillea spectabilis',
+    'Ixora coccinea','Ixora triantha','Melastoma malabathricum','Volkameria inermis',
+    'Premna obtusifolia','Senna alata','Waltheria indica','Callicarpa candicans',
+    'Heliotropium arboreum','Pemphis acidula','Medinilla medinillana',
+    'Tabernaemontana pandacaqui','Wikstroemia elliptica','Decaspermum fruticosum',
+    'Calotropis gigantea','Clerodendrum quadriloculare','Cordia sebestena',
+    'Jatropha integerrima','Senna surattensis','Senna occidentalis',
+    'Russelia equisetiformis','Tecoma stans','Guettarda speciosa','Thespesia populnea',
+    'Chromolaena odorata','Acacia auriculiformis','Premna serratifolia',
+    'Eugenia bryanii','Gymnosporia thompsonii','Myrtella bennigseniana',
+    'Lantana camara','Duranta erecta','Acalypha wilkesiana','Codiaeum variegatum',
+    'Cordyline fruticosa','Dracaena fragrans','Nerium oleander','Adenium obesum',
+    'Catharanthus roseus','Melanolepis multiglandulosa','Pipturus argenteus',
+    'Colubrina asiatica','Hamelia patens','Lagerstroemia indica','Lagerstroemia',
+    'Vitex trifolia','Triphasia trifolia','Psidium guajava','Annona squamosa',
+    'Annona reticulata','Tabernaemontana divaricata','Ixora',
+    'Callicarpa','Stachytarpheta jamaicensis','Tecoma','Russelia',
+    'Medinilla','Bougainvillea glabra',
+    // Additional shrubs for 80% coverage
+    'Averrhoa bilimbi','Hibiscus × rosa-sinensis','Hibiscus × archeri','Hibiscus',
+    'Adonidia merrillii','Hymenocallis littoralis','Ficus',
+    'Plumeria','Plumeria pudica','Hellenia speciosa',
+    'Dischidia puberula','Abutilon indicum',
+  ],
+  grass: [
+    'Poaceae','Bothriochloa pertusa','Polytrias indica','Chrysopogon aciculatus',
+    'Andropogoneae','Fimbristylis cymosa','Cyperus mindorensis','Saccharum spontaneum',
+    'Miscanthus floridulus','Eleusine indica','Dactyloctenium aegyptium',
+    'Chloris barbata','Cenchrus echinatus','Sporobolus indicus','Eragrostis tenella',
+    'Digitaria','Paspalum','Axonopus compressus','Cynodon dactylon','Panicum',
+    'Scleria polycarpa','Fimbristylis dichotoma','Fimbristylis','Cyperus',
+    'Cyperus rotundus','Cyperus ligularis','Cyperus mindorensis',
+    'Dianella saffordiana','Dianella','Phragmites karka','Megathyrsus maximus',
+    'Panicoideae','Sporobolus','Bothriochloa','Eragrostis','Cenchrus purpureus',
+    'Bambusa vulgaris','Andropogoninae','Cymbopogon citratus',
+    'Zoysia matrella','Paspalum paniculatum','Sporobolus virginicus',
+    'Thuarea involuta','Saccharum','Eragrostis','Cenchrus setosus',
+    'Cenchrus','Stenotaphrum secundatum','Arundina graminifolia',
+  ],
+  herb: [
+    'Tridax procumbens','Bidens pilosa','Bidens alba','Mimosa pudica','Sphagneticola trilobata',
+    'Stylosanthes hamata','Ruellia prostrata','Ruellia ciliatiflora','Ruellia simplex',
+    'Phyla nodiflora','Euphorbia hirta','Euphorbia hypericifolia','Asystasia gangetica',
+    'Turnera ulmifolia','Rivina humilis','Alysicarpus vaginalis','Hyptis capitata',
+    'Hedyotis megalantha','Phyllanthus amarus','Phyllanthus saffordii',
+    'Ipomoea pes-caprae','Ipomoea triloba','Passiflora foetida','Urena lobata',
+    'Acalypha indica','Euphorbia prostrata','Portulaca oleracea','Catharanthus roseus',
+    'Oxalis corniculata','Indigofera spicata','Grona triflora','Stachytarpheta cayennensis',
+    'Buchnera floridana','Utricularia caerulea','Utricularia bifida',
+    'Hippobroma longiflora','Crotalaria retusa','Asclepias curassavica',
+    'Tradescantia spathacea','Phyla','Spermacoce','Oldenlandia corymbosa',
+    'Mecardonia procumbens','Phyllanthus debilis','Phyllanthus urinaria',
+    'Euphorbia cyathophora','Chromolaena odorata','Cyanthillium cinereum',
+    'Elephantopus mollis','Gomphrena celosioides','Sesuvium portulacastrum',
+    'Wollastonia biflora','Acalypha','Spermacoce','Desmodium',
+    'Alysicarpus','Stylosanthes','Macroptilium atropurpureum',
+    'Elatostema calcareum','Procris pedunculata','Pilea microphylla',
+    'Stachytarpheta urticifolia','Ipomoea obscura',
+    // Additional herbs
+    'Tridax procumbens','Bidens pilosa','Bidens alba','Bidens',
+    'Phyllanthus saffordii','Phyllanthus mariannensis','Phyllanthus amarus',
+    'Ruellia','Asteraceae','Euphorbia hirta','Euphorbia cyathophora',
+    'Euphorbia hypericifolia','Euphorbia prostrata','Euphorbia',
+    'Rivina humilis','Tacca leontopetaloides','Turnera ulmifolia',
+    'Youngia japonica','Hippobroma longiflora','Asystasia gangetica',
+    'Crotalaria retusa','Crotalaria','Wollastonia biflora',
+    'Mikania micrantha','Mikania','Phyla nodiflora','Phyla',
+    'Flemingia strobilifera','Flemingia','Amaranthus viridis','Amaranthus',
+    'Abrus precatorius','Coleus scutellarioides','Coleus',
+    'Cestrum diurnum','Alysicarpus vaginalis','Canavalia rosea',
+    'Eugenia palumbis','Neustanthus phaseoloides','Cenchrus echinatus',
+    'Peperomia mariannensis','Abutilon indicum','Rubiaceae',
+    'Selenicereus undatus','Acalypha indica','Acalypha wilkesiana',
+    'Hyptis capitata','Senega paniculata','Phyllanthus marianus',
+    'Gomphrena','Cyanthillium','Spermacoce remota',
+    'Oldenlandia','Mecardonia procumbens',
+    'Grona','Indigofera','Oxalis','Calyptocarpus vialis',
+    'Wollastonia biflora','Tacca',
+  ],
+  vine: [
+    'Antigonon leptopus','Passiflora vesicaria','Passiflora pallida','Passiflora foetida',
+    'Ipomoea pes-caprae','Ipomoea triloba','Ipomoea indica','Mucuna gigantea',
+    'Canavalia rosea','Mikania micrantha','Lygodium microphyllum',
+    'Flagellaria indica','Epipremnum aureum','Cassytha filiformis',
+    'Telosma procumbens','Neustanthus phaseoloides','Colubrina asiatica',
+    'Centrosema pubescens','Vigna marina','Entada phaseoloides',
+    'Thunbergia grandiflora','Thunbergia erecta','Stictocardia tiliifolia',
+    'Operculina turpethum','Ipomoeeae','Epipremnum pinnatum',
+    'Syngonium podophyllum','Canavalia','Ipomoea',
+    'Gynochthodes umbellata','Passiflora','Ipomoea batatas',
+    'Ipomoea aquatica','Ipomoea obscura','Ipomoea cairica',
+    'Ipomoea quamoclit','Ipomoea nil','Clitoria ternatea',
+    'Macroptilium atropurpureum','Macroptilium',
+    'Mikania','Mucuna','Canavalia megalantha','Canavalia cathartica',
+    'Freycinetia reineckei','Freycinetia',
+  ],
+  fern: [
+    'Davallia solida','Nephrolepis brownii','Nephrolepis','Microsorum punctatum',
+    'Pyrrosia lanceolata','Microsorum grossum','Dicranopteris','Asplenium polyodon',
+    'Pteris tripartita','Pteris vittata','Davallia heterophylla','Adiantum tenerum',
+    'Lygodium auriculatum','Blechnum orientale','Acrostichum aureum',
+    'Palhinhaea cernua','Haplopteris ensiformis','Angiopteris evecta',
+    'Polypodiopsida','Ferns','Selaginella ciliaris','Selaginella willdenowii',
+    'Cyclosorus interruptus','Christella parasitica','Amblovenatum opulentum',
+    'Asplenium pellucidum','Asplenium laserpitiifolium','Nephrolepis acutifolia',
+    'Nephrolepis biserrata','Nephrolepis hirsutula','Thelypteridoideae',
+    'Microlepia speluncae','Odontosoria chinensis','Gleichenia',
+    'Diplazium esculentum','Christella guamensis','Adiantum philippense',
+    'Asplenium','Pteris','Thelypteris','Microsorum','Pyrrosia',
+    'Nephrolepis exaltata','Polypodiaceae','Polypodiales',
+    'Christella gretheri','Haplopteris elongata','Haplopteris',
+    'Christella','Davallia','Lygodium','Ophioderma pendulum',
+    'Ceratopteris','Schizaea dichotoma',
+  ],
+  epiphyte: [
+    'Taeniophyllum marianense','Dendrobium guamense','Bulbophyllum guamense',
+    'Bulbophyllum longiflorum','Bulbophyllum raulersoniae','Coelogyne guamensis',
+    'Zeuxine fritzii','Phreatia micrantha','Tuberolabium guamense',
+    'Luisia teretifolia','Nervilia jacksoniae','Nervilia concolor',
+    'Nervilia platychila','Spathoglottis plicata','Arundina graminifolia',
+    'Calanthe triplicata','Eulophia picta','Dischidia puberula',
+    'Dischidia nummularia','Peperomia mariannensis','Procris pedunculata',
+    'Dendrobium','Bulbophyllum','Zeuxine','Calanthe',
+    'Spathoglottis','Eulophia','Nervilia','Phreatia',
+  ],
+  fungi: [
+    'Agaricales','Trametes','Polyporales','Phallus indusiatus','Phallus multicolor',
+    'Xylaria','Auricularia','Agaricomycetes','Lecanoromycetes','Ramalina',
+    'Schizophyllum commune','Lentinus','Trametes sanguinea','Trametes coccinea',
+    'Marasmius haematocephalus','Marasmiaceae','Geastrum','Agaricaceae',
+    'Psathyrellaceae','Dacrymyces spathularia','Lycoperdaceae','Phallus',
+    'Polyporaceae','Trametes cinnabarina','Trametes lactinea','Trametes cubensis',
+    'Schizophyllum','Panus','Oudemansiella','Mycena','Neonothopanus nambi',
+    'Mutinus bambusinus','Basidiomycota','Leucocoprinus birnbaumii',
+    'Ganoderma','Auricularia cornea','Daldinia','Amanita','Gymnopilus',
+    'Collema','Usnea','Coprinopsis lagopus','Leucocoprinus','Coprinellus',
+    'Trametes','Agaricineae','Psathyrellaceae','Marasmiaceae',
+    'Lecanorales','Lecanoromycetes','Parmeliaceae',
+  ],
+};
+const HABIT_REVERSE = {};
+Object.entries(HABIT_MAP).forEach(([h, list]) => list.forEach(sn => HABIT_REVERSE[sn] = h));
+// taxgroup → habit fallback
+const TAXGROUP_HABIT = {
+  'Grasses':'grass','Sedges':'grass','Ferns':'fern','Mosses':'fern',
+  'Liverworts':'fern','Orchids':'epiphyte','Palms':'tree','Cycads':'tree',
+  'Gilled Mushrooms':'fungi','Bracket & Shelf Fungi':'fungi','Stinkhorns':'fungi',
+  'Jelly Fungi':'fungi','Cup & Sac Fungi':'fungi','Earthstars & Puffballs':'fungi',
+  'Lichens':'fungi','Other Fungi':'fungi',
+};
+
+// fungi look-up tables
+// fungi color
+const FUNGI_COLOR_MAP = {
+  white: [
+    'Schizophyllum commune','Trametes lactinea','Trametes',
+    'Leucocoprinus birnbaumii','Leucocoprinus','Oudemansiella',
+    'Oudemansiella australis','Marasmiaceae','Pleurotus','Pleurotus ostreatus',
+    'Dacrymyces spathularia','Collybiopsis','Marasmiellus candidus',
+    'Trametes coccinea','Mycena','Mycena chlorophos',
+    'Mycena galericulata','Coprinellus','Coprinopsis lagopus',
+    'Phallus indusiatus','Colus pusillus','Ganoderma',
+    'Neonothopanus nambi','Leucocoprinus nympharum',
+  ],
+  brown: [
+    'Agaricales','Lentinus','Lentinus sajor-caju','Panus','Panus fasciatus',
+    'Panus lecomtei','Gymnopilus','Gymnopilus dilepis','Agaricaceae',
+    'Agaricineae','Marasmius','Marasmius haematocephalus','Marasmius siccus',
+    'Xylaria','Xylaria polymorpha','Xylaria flabelliformis','Daldinia',
+    'Daldinia concentrica','Psathyrellaceae','Trametes hirsuta',
+    'Trametes lactinea','Schizophyllum','Agaricomycetes','Basidiomycota',
+    'Ganoderma','Ganoderma australe','Earliella scabrosa','Earliella',
+    'Ischnoderma resinosum','Favolus grammocephalus','Favolus',
+    'Hexagonia tenuis','Polyporus','Coprinopsis','Psathyrella ammophila',
+    'Amauroderma','Hypoxylon rubiginosum','Hypoxylon',
+    'Collybiopsis quercophila','Collybiopsis ramealis',
+    'Mycena roseilignicola','Oudemansiella australis',
+  ],
+  red: [
+    'Trametes sanguinea','Trametes coccinea','Trametes cinnabarina',
+    'Hygrocybe coccinea','Marasmius haematocephalus',
+    'Lentinus arcularius',
+  ],
+  yellow: [
+    'Leucocoprinus birnbaumii','Phallus multicolor','Amanita',
+    'Favolaschia manipularis','Dacrymyces spathularia',
+    'Gymnopilus','Neonothopanus nambi',
+  ],
+  gray: [
+    'Agaricales','Psathyrellaceae','Coprinellus','Coprinellus aureogranulatus',
+    'Coprinellus disseminatus','Coprinopsis lagopus','Parasola plicatilis',
+    'Trametes','Polyporales','Schizophyllum commune',
+    'Xylaria','Xylaria polymorpha','Xylaria flabelliformis',
+    'Daldinia','Daldinia concentrica','Entoloma','Amauroderma',
+  ],
+  purple: [
+    'Marasmius haematocephalus','Entoloma',
+  ],
+  green: [
+    'Mycena chlorophos','Neonothopanus nambi','Entoloma',
+  ],
+};
+const FUNGI_COLOR_REVERSE = {};
+Object.entries(FUNGI_COLOR_MAP).forEach(([c, list]) => list.forEach(sn => FUNGI_COLOR_REVERSE[sn] = c));
+
+// Fungi shape
+const FUNGI_SHAPE_MAP = {
+  cap: [
+    'Agaricales','Agaricomycetes','Agaricaceae','Agaricineae','Schizophyllum commune',
+    'Lentinus','Lentinus sajor-caju','Lentinus arcularius','Panus','Panus fasciatus',
+    'Panus lecomtei','Gymnopilus','Gymnopilus dilepis','Leucocoprinus birnbaumii',
+    'Leucocoprinus','Leucocoprinus nympharum','Marasmius','Marasmius haematocephalus',
+    'Marasmius siccus','Marasmiaceae','Collybiopsis','Collybiopsis quercophila',
+    'Collybiopsis ramealis','Mycena','Mycena chlorophos','Mycena galericulata',
+    'Mycena roseilignicola','Oudemansiella','Oudemansiella australis',
+    'Coprinellus','Coprinellus aureogranulatus','Coprinellus disseminatus',
+    'Coprinopsis','Coprinopsis lagopus','Parasola plicatilis',
+    'Psathyrellaceae','Psathyrella ammophila','Amanita','Entoloma',
+    'Marasmiellus candidus','Psathyrellaceae',
+    'Hygrocybe','Hygrocybe coccinea','Hygrocybe nigrescens',
+    'Pleurotus','Pleurotus ostreatus','Colus pusillus',
+    'Lepiota','Lepiota rubrotinctoides','Macropsalliota meleagris',
+    'Chlorophyllum','Chlorophyllum molybdites','Conocybe',
+    'Neonothopanus nambi','Collybiopsis','Coprinus',
+    'Macrocybe','Agaricus','Lactocollybia',
+    'Favolaschia manipularis',
+  ],
+  bracket: [
+    'Trametes','Trametes sanguinea','Trametes coccinea','Trametes cinnabarina',
+    'Trametes lactinea','Trametes cubensis','Trametes hirsuta','Trametes conchifer',
+    'Polyporales','Polyporaceae','Ganoderma','Ganoderma australe',
+    'Earliella scabrosa','Earliella','Earliella uda','Ischnoderma resinosum',
+    'Favolus grammocephalus','Favolus','Hexagonia tenuis','Microporus xanthopus',
+    'Microporus','Microporus affinis','Amauroderma','Podoscypha petalodes',
+    'Trametes cubensis','Rigidoporus microporus','Coriolopsis trogii',
+    'Pycnoporellus fulgens','Meripilus lineatus','Bresadolia','Bresadolia uda',
+    'Irpiciporus','Neofavolus',
+  ],
+  cup: [
+    'Xylaria','Xylaria polymorpha','Xylaria flabelliformis','Daldinia',
+    'Daldinia concentrica','Hypoxylon','Hypoxylon rubiginosum','Cookeina',
+    'Cookeina tricholoma','Xylariaceae','Nectria','Cyathus striatus',
+    'Nidulariaceae','Kretzschmaria clavus','Daldinia','Pezizomycotina',
+    'Sordariomycetes',
+  ],
+  puffball: [
+    'Lycoperdaceae','Geastrum','Geastrum fimbriatum',
+    'Calvatia','Lycoperdon','Apioperdon',
+  ],
+  stinkhorn: [
+    'Phallus indusiatus','Phallus multicolor','Phallus','Mutinus bambusinus',
+    'Mutinus','Colus pusillus','Lysurus',
+  ],
+  jelly: [
+    'Auricularia','Auricularia cornea','Auricularia polytricha',
+    'Auricularia auricula-judae','Auricularia mesenterica',
+    'Dacrymyces spathularia','Tremella','Tremella fuciformis',
+    'Phaeotremella foliacea','Sirobasidium magnum','Sirobasidium',
+    'Exidia recisa','Exidia nigricans',
+  ],
+  crust: [
+    'Lecanoromycetes','Ramalina','Usnea','Usnea hirta','Usnea barbata',
+    'Lecanorales','Parmeliaceae','Collema','Collema subflaccidum',
+    'Leptogium cyanescens','Peltigerales','Thelephora','Dictyonema',
+    'Sirobasidium','Clavulina','Ramaria','Coleosporium','Alternaria',
+    'Arthoniaceae','Chrysothrix','Phaeographis','Phyllopsora',
+    'Flavoparmelia caperata','Myelochroa aurulenta','Xanthoparmelia cumberlandia',
+    'Ramalinaceae','Parmotrema tinctorum',
+  ],
+};
+const FUNGI_SHAPE_REVERSE = {};
+Object.entries(FUNGI_SHAPE_MAP).forEach(([sh, list]) => list.forEach(sn => FUNGI_SHAPE_REVERSE[sn] = sh));
+// Taxgroup → shape fallback
+const TAXGROUP_FUNGI_SHAPE = {
+  'Gilled Mushrooms':'cap','Bracket & Shelf Fungi':'bracket',
+  'Stinkhorns':'stinkhorn','Jelly Fungi':'jelly',
+  'Cup & Sac Fungi':'cup','Earthstars & Puffballs':'puffball',
+  'Lichens':'crust',
+};
+
+// ecosystem keyed by scientific name
+const ECOSYSTEM_MAP = {
+  limestone: [
+    'Cycas micronesica','Cynometra ramiflora','Bikkia tetrandra','Ficus prolixa',
+    'Intsia bijuga','Heritiera longipetiolata','Ochrosia oppositifolia','Ochrosia mariannensis',
+    'Elaeocarpus joga','Drypetes dolichocarpa','Meiogyne cylindrocarpa',
+    'Polyscias macgillivrayi','Aglaia mariannensis','Macaranga thompsonii',
+    'Aidia cochinchinensis','Timonius nitidus','Tristiropsis acutangula',
+    'Eugenia reinwardtiana','Planchonella obovata','Gymnosporia thompsonii',
+    'Discocalyx megacarpa','Merrilliodendron megacarpum','Pisonia grandis',
+    'Paratrophis pendulina','Psychotria mariana','Psychotria hombroniana',
+    'Guettarda speciosa','Hernandia nymphaeifolia','Barringtonia asiatica',
+    'Mammea odorata','Ixora triantha','Premna serratifolia','Decaspermum fruticosum',
+    'Ficus tinctoria','Allophylus timoriensis','Eugenia bryanii','Capparis mariana',
+    'Maesa walkeri','Scaevola taccada','Pemphis acidula','Eugenia palumbis',
+    'Taeniophyllum marianense','Dendrobium guamense','Bulbophyllum guamense',
+    'Coelogyne guamensis','Elatostema calcareum','Piper guahamense',
+    'Procris pedunculata','Medinilla medinillana','Microsorum scolopendria',
+  ],
+  savanna: [
+    'Dianella saffordiana','Hedyotis megalantha','Myrtella bennigseniana',
+    'Phyllanthus saffordii','Phyllanthus mariannensis','Dicranopteris linearis',
+    'Saccharum spontaneum','Miscanthus floridulus','Bothriochloa pertusa',
+    'Chrysopogon aciculatus','Dimeria chloridiformis','Curculigo orchioides',
+    'Utricularia caerulea','Eulophia picta','Waltheria indica','Senega paniculata',
+    'Flemingia strobilifera','Desmodium incanum','Ipomoea triloba',
+    'Crotalaria retusa','Stylosanthes hamata','Buchnera floridana',
+    'Stachytarpheta urticifolia','Acacia auriculiformis','Anacardium occidentale',
+    'Dodonaea viscosa','Wikstroemia elliptica','Melastoma malabathricum mariannum',
+    'Palhinhaea cernua','Bulbophyllum raulersoniae','Nervilia jacksoniae',
+    'Callicarpa candicans','Nervillia concolor','Melastoma malabathricum',
+    'Planchonella obovata','Scleria polycarpa','Blechnum orientale',
+    'Chromolaena odorata','Crotalaria','Stylosanthes','Indigofera',
+    'Chamaecrista','Flemingia','Acacia','Leucaena leucocephala',
+    'Thelyphora','Amauroderma','Lycoperdaceae',
+  ],
+  coastal: [
+    'Scaevola taccada','Heliotropium arboreum','Volkameria inermis',
+    'Ipomoea pes-caprae','Canavalia rosea','Pandanus tectorius','Pandanus dubius',
+    'Pemphis acidula','Barringtonia asiatica','Hernandia nymphaeifolia',
+    'Thespesia populnea','Casuarina equisetifolia','Terminalia catappa',
+    'Calophyllum inophyllum','Sesuvium portulacastrum','Wollastonia biflora',
+    'Fimbristylis cymosa','Thuarea involuta','Sporobolus virginicus',
+    'Schleinitzia fosbergii','Sophora tomentosa','Vigna marina',
+    'Guettarda speciosa','Tournefortia argentea','Bikkia tetrandra',
+    'Ochrosia mariannensis','Lumnitzera littorea','Rhizophora stylosa',
+    'Nypa fruticans','Avicennia marina','Heritiera littoralis',
+    'Barringtonia racemosa','Cassytha filiformis','Hymenocallis littoralis',
+    'Heliotropium anomalum','Scaevola','Pandanus','Cerbera odollam',
+    'Pisonia grandis','Capparis mariana','Morinda citrifolia',
+    'Ochrosia oppositifolia','Cordia subcordata','Premna serratifolia',
+    'Allophylus timoriensis','Ximenia americana','Premna obtusifolia',
+    'Gymnosporia thompsonii',
+  ],
+  ravine: [
+    'Timonius nitidus','Freycinetia reineckei','Angiopteris evecta',
+    'Psychotria mariana','Cynometra ramiflora','Syzygium thompsonii',
+    'Asplenium nidus','Microsorum scolopendria','Davallia solida',
+    'Nephrolepis','Tectaria crenata','Microsorum punctatum','Haplopteris ensiformis',
+    'Piper guahamense','Medinilla medinillana','Procris pedunculata',
+    'Elatostema calcareum','Calophyllum inophyllum','Artocarpus mariannensis',
+    'Barringtonia racemosa','Tinopora','Dicranopteris linearis',
+    'Aglaia mariannensis','Aidia cochinchinensis','Drypetes dolichocarpa',
+    'Merrilliodendron megacarpum','Paratrophis pendulina','Maesa walkeri',
+    'Geniostoma rupestre','Psychotria hombroniana',
+    'Elaeocarpus joga','Heritiera longipetiolata','Meiogyne cylindrocarpa',
+    'Polyscias macgillivrayi','Tristiropsis acutangula','Discocalyx megacarpa',
+    'Taeniophyllum marianense','Nervilia concolor','Bulbophyllum guamense',
+    'Coelogyne guamensis','Dendrobium guamense','Peperomia mariannensis',
+    'Mammea odorata','Macaranga thompsonii',
+  ],
+};
+const ECO_REVERSE = {};
+Object.entries(ECOSYSTEM_MAP).forEach(([eco, list]) => list.forEach(sn => {
+  if (!ECO_REVERSE[sn]) ECO_REVERSE[sn] = [];
+  ECO_REVERSE[sn].push(eco);
+}));
+
+// village boundaries lat/lon
+// [latMin, latMax, lonMin, lonMax]
+const VILLAGE_BOUNDS = {
+  'Hagåtña':          [13.460, 13.480, 144.745, 144.760],
+  'Sinajana':         [13.454, 13.468, 144.760, 144.775],
+  'Mongmong-Toto-Maite':[13.452, 13.470, 144.772, 144.800],
+  'Piti':             [13.467, 13.496, 144.690, 144.730],
+  'Asan-Maina':       [13.460, 13.490, 144.730, 144.760],
+  'Agana Heights':    [13.467, 13.488, 144.760, 144.780],
+  'Mangilao':         [13.432, 13.468, 144.790, 144.830],
+  'Barrigada':        [13.462, 13.497, 144.790, 144.820],
+  'Dededo':           [13.517, 13.620, 144.820, 144.920],
+  'Yigo':             [13.520, 13.650, 144.870, 144.960],
+  'Tamuning-Tumon-Harmon':[13.480, 13.535, 144.780, 144.840],
+  'Chalan Pago-Ordot':[13.450, 13.475, 144.775, 144.800],
+  'Santa Rita':       [13.380, 13.445, 144.710, 144.780],
+  'Agat':             [13.370, 13.415, 144.660, 144.720],
+  'Umatac':           [13.300, 13.365, 144.650, 144.730],
+  'Merizo':           [13.264, 13.320, 144.660, 144.730],
+  'Inarajan':         [13.270, 13.360, 144.730, 144.810],
+  'Yona':             [13.370, 13.440, 144.760, 144.820],
+  'Talo\'fo\'fo\'':   [13.340, 13.400, 144.740, 144.800],
+};
+function getVillage(lat, lon) {
+  for (const [v, b] of Object.entries(VILLAGE_BOUNDS)) {
+    if (lat >= b[0] && lat <= b[1] && lon >= b[2] && lon <= b[3]) return v;
+  }
+  return null;
+}
+
+// ── TAXONOMY ───────────────────────────────────────────────────────────
 const PLANTAE_GROUPS = ['Flowering Plants','Ferns','Grasses','Sedges','Orchids','Palms','Cycads','Mosses','Liverworts'];
 const FUNGI_GROUPS   = ['Gilled Mushrooms','Bracket & Shelf Fungi','Stinkhorns','Jelly Fungi','Cup & Sac Fungi','Earthstars & Puffballs','Lichens','Other Fungi'];
 const ALL_TAX_GROUPS = [...PLANTAE_GROUPS, ...FUNGI_GROUPS];
@@ -814,13 +1962,140 @@ function rebuildTaxSelect() {
 }
 rebuildTaxSelect();
 
+// lookup helpers
+function getColor(s) {
+  // exact match, then genus match
+  if (FLOWER_COLOR[s.sn]) return FLOWER_COLOR[s.sn];
+  const genus = s.sn.split(' ')[0];
+  return FLOWER_COLOR[genus] || null;
+}
+function getLeaf(s) {
+  if (LEAF_SHAPE[s.sn]) return LEAF_SHAPE[s.sn];
+  const genus = s.sn.split(' ')[0];
+  return LEAF_SHAPE[genus] || null;
+}
+function getSize(s) {
+  if (SIZE_MAP[s.sn]) return SIZE_MAP[s.sn];
+  const genus = s.sn.split(' ')[0];
+  return SIZE_MAP[genus] || null;
+}
+function getHabit(s) {
+  if (HABIT_REVERSE[s.sn]) return HABIT_REVERSE[s.sn];
+  const genus = s.sn.split(' ')[0];
+  if (HABIT_REVERSE[genus]) return HABIT_REVERSE[genus];
+  return TAXGROUP_HABIT[s.taxgroup] || null;
+}
+function getEco(s) {
+  const snMatches = ECO_REVERSE[s.sn] || [];
+  const genus = s.sn.split(' ')[0];
+  const genusMatches = ECO_REVERSE[genus] || [];
+  return [...new Set([...snMatches, ...genusMatches])];
+}
+function getVillageForSpecies(s) {
+  if (s.lat == null || s.lon == null) return null;
+  return getVillage(s.lat, s.lon);
+}
+function getFungiColor(s) {
+  if (FUNGI_COLOR_REVERSE[s.sn]) return FUNGI_COLOR_REVERSE[s.sn];
+  const genus = s.sn.split(' ')[0];
+  return FUNGI_COLOR_REVERSE[genus] || null;
+}
+function getFungiShape(s) {
+  if (FUNGI_SHAPE_REVERSE[s.sn]) return FUNGI_SHAPE_REVERSE[s.sn];
+  const genus = s.sn.split(' ')[0];
+  if (FUNGI_SHAPE_REVERSE[genus]) return FUNGI_SHAPE_REVERSE[genus];
+  return TAXGROUP_FUNGI_SHAPE[s.taxgroup] || null;
+}
+
+// active filter chips
+function updateChips() {
+  const container = document.getElementById('activeFilters');
+  const chips = [];
+  const mkChip = (label, cls, resetFn) =>
+    `<span class="af-chip ${cls}" data-reset="${resetFn}">${label} <span class="af-chip-x">×</span></span>`;
+  if (colorFilter !== 'all')        chips.push(mkChip('Flower: ' + colorFilter, '',        'colorFilter'));
+  if (leafFilter !== 'all')         chips.push(mkChip('Leaf: ' + leafFilter, '',            'leafFilter'));
+  if (sizeFilter !== 'all')         chips.push(mkChip('Size: ' + sizeFilter, '',            'sizeFilter'));
+  if (habitFilter !== 'all')        chips.push(mkChip('Habit: ' + habitFilter, 'habit',     'habitFilter'));
+  if (ecoFilter !== 'all')          chips.push(mkChip('Ecosystem: ' + ecoFilter, 'eco',     'ecoFilter'));
+  if (villageFilter !== 'all')      chips.push(mkChip('Village: ' + villageFilter, 'village','villageFilter'));
+  if (fungiColorFilter !== 'all')   chips.push(mkChip('Fungi color: ' + fungiColorFilter, 'eco','fungiColorFilter'));
+  if (fungiShapeFilter !== 'all')   chips.push(mkChip('Fungi shape: ' + fungiShapeFilter, 'habit','fungiShapeFilter'));
+  if (chips.length) {
+    container.style.display = 'flex';
+    container.innerHTML = chips.join('');
+    container.querySelectorAll('.af-chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        const f = chip.dataset.reset;
+        if (f === 'colorFilter')      { colorFilter = 'all';      document.getElementById('colorFilter').value = 'all'; }
+        if (f === 'leafFilter')       { leafFilter = 'all';        document.getElementById('leafFilter').value = 'all'; }
+        if (f === 'sizeFilter')       { sizeFilter = 'all';        document.getElementById('sizeFilter').value = 'all'; }
+        if (f === 'habitFilter')      { habitFilter = 'all';       document.getElementById('habitFilter').value = 'all'; }
+        if (f === 'ecoFilter')        { ecoFilter = 'all';         document.getElementById('ecoFilter').value = 'all'; }
+        if (f === 'villageFilter')    { villageFilter = 'all';     document.getElementById('villageFilter').value = 'all'; }
+        if (f === 'fungiColorFilter') { fungiColorFilter = 'all';  document.getElementById('fungiColorFilter').value = 'all'; }
+        if (f === 'fungiShapeFilter') { fungiShapeFilter = 'all';  document.getElementById('fungiShapeFilter').value = 'all'; }
+        updateChips(); applyAll();
+      });
+    });
+  } else {
+    container.style.display = 'none';
+    container.innerHTML = '';
+  }
+}
+
 // filter & sort
 function applyAll() {
   const q = query.toLowerCase().trim();
+  // show/hide fungi filter row based on group
+  const fungiRow = document.getElementById('fungiFilterRow');
+  if (gFilter === 'Fungi') {
+    fungiRow.style.display = 'flex';
+  } else {
+    fungiRow.style.display = 'none';
+    fungiColorFilter = 'all';
+    fungiShapeFilter = 'all';
+    const fc = document.getElementById('fungiColorFilter');
+    const fs = document.getElementById('fungiShapeFilter');
+    if (fc) fc.value = 'all';
+    if (fs) fs.value = 'all';
+  }
   filtered = SPECIES.filter(s => {
     if (gFilter !== 'all' && s.group !== gFilter) return false;
     if (taxFilter !== 'all' && s.taxgroup !== taxFilter) return false;
-    if (q) return s.sn.toLowerCase().includes(q) || s.cn.toLowerCase().includes(q);
+    if (q && !s.sn.toLowerCase().includes(q) && !s.cn.toLowerCase().includes(q)) return false;
+    if (colorFilter !== 'all') {
+      const c = getColor(s);
+      if (!c || c !== colorFilter) return false;
+    }
+    if (leafFilter !== 'all') {
+      const l = getLeaf(s);
+      if (!l || l !== leafFilter) return false;
+    }
+    if (sizeFilter !== 'all') {
+      const sz = getSize(s);
+      if (!sz || sz !== sizeFilter) return false;
+    }
+    if (habitFilter !== 'all') {
+      const h = getHabit(s);
+      if (!h || h !== habitFilter) return false;
+    }
+    if (ecoFilter !== 'all') {
+      const ecos = getEco(s);
+      if (!ecos.includes(ecoFilter)) return false;
+    }
+    if (villageFilter !== 'all') {
+      const v = getVillageForSpecies(s);
+      if (!v || v !== villageFilter) return false;
+    }
+    if (fungiColorFilter !== 'all') {
+      const fc = getFungiColor(s);
+      if (!fc || fc !== fungiColorFilter) return false;
+    }
+    if (fungiShapeFilter !== 'all') {
+      const fs = getFungiShape(s);
+      if (!fs || fs !== fungiShapeFilter) return false;
+    }
     return true;
   });
   if (sortBy === 'az') filtered.sort((a,b) => a.sn.localeCompare(b.sn));
@@ -829,6 +2104,7 @@ function applyAll() {
   if (currentView === 'grid') renderGrid(true);
   else renderMap();
   document.getElementById('countPill').textContent = filtered.length.toLocaleString() + ' species';
+  updateChips();
 }
 
 // grid
@@ -854,6 +2130,22 @@ function makeCard(s, idx) {
   const img = s.imgs[0]
     ? `<img src="${s.imgs[0]}" alt="${s.sn}" loading="lazy" onerror="this.parentNode.innerHTML='<div class=no-img>${s.group==='Fungi'?'🍄':'🌿'}</div>'">`
     : `<div class="no-img">${s.group==='Fungi'?'🍄':'🌿'}</div>`;
+  // Build trait badges
+  const badges = [];
+  if (s.group === 'Fungi') {
+    const fc = getFungiColor(s);
+    const fs = getFungiShape(s);
+    if (fc) badges.push(`<span class="trait-badge" style="background:var(--fungilt);color:var(--fungi)">${fc}</span>`);
+    if (fs) badges.push(`<span class="trait-badge" style="background:var(--fungilt);color:var(--fungi)">${fs}</span>`);
+  } else {
+    const c = getColor(s);
+    const h = getHabit(s);
+    const sz = getSize(s);
+    if (c) badges.push(`<span class="trait-badge" style="background:var(--greenlt);color:var(--green)">${c}</span>`);
+    if (h && h !== 'fungi') badges.push(`<span class="trait-badge" style="background:var(--bg2);color:var(--ink3)">${h}</span>`);
+    if (sz) badges.push(`<span class="trait-badge" style="background:var(--bg2);color:var(--ink3)">${sz}</span>`);
+  }
+  const badgesHtml = badges.length ? `<div class="card-badges">${badges.join('')}</div>` : '';
   el.innerHTML = `
     <div class="card-img">
       ${img}
@@ -864,6 +2156,7 @@ function makeCard(s, idx) {
       <div class="card-cn">${s.cn || '—'}</div>
       <div class="card-sn">${s.sn}</div>
       <div class="card-tg">${s.taxgroup}</div>
+      ${badgesHtml}
     </div>`;
   el.addEventListener('click', () => openDetail(s));
   return el;
@@ -913,6 +2206,42 @@ const tidIndex = {};
 SPECIES.forEach(s => tidIndex[s.tid] = s);
 function openDetailById(tid) { openDetail(tidIndex[tid]); }
 
+function buildTraitRow(s) {
+  const isF = s.group === 'Fungi';
+  const traits = [];
+  const eco = getEco(s);
+  const village = getVillageForSpecies(s);
+
+  if (isF) {
+    const fc = getFungiColor(s);
+    const fs = getFungiShape(s);
+    if (fc) traits.push(['Color', fc]);
+    if (fs) traits.push(['Shape', fs]);
+  } else {
+    const c = getColor(s);
+    const l = getLeaf(s);
+    const sz = getSize(s);
+    const h = getHabit(s);
+    if (c) traits.push(['Flower color', c]);
+    if (l) traits.push(['Leaf shape', l.replace('-', ' ')]);
+    if (sz) traits.push(['Size class', sz === 'small' ? 'Small (under 1 m)' : sz === 'medium' ? 'Medium (1–5 m)' : 'Tall (over 5 m)']);
+    if (h && h !== 'fungi') traits.push(['Growth habit', h]);
+  }
+  if (eco.length) traits.push(['Ecosystem', eco.map(e => e === 'limestone' ? 'Limestone Forest' : e === 'savanna' ? 'Savanna' : e === 'coastal' ? 'Coastal & Strand' : 'Ravine Forest').join(', ')]);
+  if (village) traits.push(['Village', village]);
+
+  if (!traits.length) return '';
+
+  const pills = traits.map(([label, val]) =>
+    `<span style="display:inline-flex;align-items:center;gap:4px;background:${isF ? 'var(--fungilt)' : 'var(--greenlt)'};color:${isF ? 'var(--fungi)' : 'var(--green)'};border-radius:10px;padding:3px 10px;font-size:.66rem;font-weight:500;letter-spacing:.04em;margin:2px"><strong>${label}:</strong>&nbsp;${val}</span>`
+  ).join('');
+
+  return `<div class="det-row">
+    <div class="det-row-lbl">Field Key</div>
+    <div class="det-row-val" style="display:flex;flex-wrap:wrap;gap:4px">${pills}</div>
+  </div>`;
+}
+
 function openDetail(s) {
   const isF = s.group === 'Fungi';
   const mainImg = s.imgs[0] || '';
@@ -938,6 +2267,7 @@ function openDetail(s) {
         <div class="det-row-lbl">Wikipedia</div>
         <div class="det-row-val" id="wikiBox"><span class="wiki-loading">Loading description…</span></div>
       </div>
+      ${buildTraitRow(s)}
       <div class="det-row">
         <div class="det-row-lbl">Observations</div>
         <div class="det-row-val">${s.obs.toLocaleString()} recorded on Guam</div>
@@ -988,7 +2318,7 @@ function initDetailMap(s) {
   }).addTo(detailMiniMap);
 }
 
-// Wikipedia fetch
+// wikipedia fetch
 const wikiCache = {};
 async function fetchWiki(sn, isF) {
   const box = document.getElementById('wikiBox');
@@ -1350,12 +2680,52 @@ document.getElementById('searchInput').addEventListener('input', e => {
   searchTimer = setTimeout(() => { query = e.target.value; applyAll(); }, 200);
 });
 
-// ── PLANT OF THE DAY ─────────────────────────────────────────────────
+// extended filter listeners
+document.getElementById('colorFilter').addEventListener('change', e => {
+  colorFilter = e.target.value; applyAll();
+});
+document.getElementById('leafFilter').addEventListener('change', e => {
+  leafFilter = e.target.value; applyAll();
+});
+document.getElementById('sizeFilter').addEventListener('change', e => {
+  sizeFilter = e.target.value; applyAll();
+});
+document.getElementById('habitFilter').addEventListener('change', e => {
+  habitFilter = e.target.value; applyAll();
+});
+document.getElementById('ecoFilter').addEventListener('change', e => {
+  ecoFilter = e.target.value; applyAll();
+});
+document.getElementById('villageFilter').addEventListener('change', e => {
+  villageFilter = e.target.value; applyAll();
+});
+document.getElementById('fungiColorFilter').addEventListener('change', e => {
+  fungiColorFilter = e.target.value; applyAll();
+});
+document.getElementById('fungiShapeFilter').addEventListener('change', e => {
+  fungiShapeFilter = e.target.value; applyAll();
+});
+document.getElementById('clearFiltersBtn').addEventListener('click', () => {
+  colorFilter = 'all'; leafFilter = 'all'; sizeFilter = 'all';
+  habitFilter = 'all'; ecoFilter = 'all'; villageFilter = 'all';
+  fungiColorFilter = 'all'; fungiShapeFilter = 'all';
+  document.getElementById('colorFilter').value = 'all';
+  document.getElementById('leafFilter').value = 'all';
+  document.getElementById('sizeFilter').value = 'all';
+  document.getElementById('habitFilter').value = 'all';
+  document.getElementById('ecoFilter').value = 'all';
+  document.getElementById('villageFilter').value = 'all';
+  document.getElementById('fungiColorFilter').value = 'all';
+  document.getElementById('fungiShapeFilter').value = 'all';
+  applyAll();
+});
+
+// potd
 function initPotd() {
-  // Seed by date so it's consistent all day but changes daily
+  // daily change
   const today = new Date();
   const seed = today.getFullYear() * 10000 + (today.getMonth()+1) * 100 + today.getDate();
-  // Pick a species with at least one image, weighted toward well-observed ones
+  // species pic + img
   const eligible = SPECIES.filter(s => s.imgs.length > 0 && s.obs >= 5);
   const idx = seed % eligible.length;
   const s = eligible[idx];
@@ -1379,7 +2749,7 @@ function initPotd() {
   document.getElementById('potdBtn').onclick = (e) => { e.stopPropagation(); openDetail(s); };
 }
 
-// ── INIT ──────────────────────────────────────────────────────────────
+// init
 initPotd();
 applyAll();
 
@@ -1475,7 +2845,7 @@ function sortAmot(key) {
 }
 
 
-// Init AMOT
+// init amot
 renderAmot(AMOT);
 </script>
 </body>
