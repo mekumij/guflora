@@ -678,6 +678,314 @@ img { border: 1px solid #2b463c !important; }
 .res-card-desc { display: block !important; }
 .res-card-type { display: inline-block !important; }
 
+```css
+/* missing observation alerts */
+.missing-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: linear-gradient(135deg, #ff6b6b 0%, #ee5555 100%);
+  color: white;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: .7rem;
+  font-weight: 600;
+  letter-spacing: .03em;
+  margin-left: 8px;
+  box-shadow: 0 2px 8px rgba(255,107,107,0.3);
+  animation: pulse-badge 2s ease-in-out infinite;
+}
+ 
+@keyframes pulse-badge {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.03); }
+}
+ 
+.missing-icon {
+  font-size: 1rem;
+}
+ 
+.missing-modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.7);
+  z-index: 1000;
+  padding: 20px;
+  overflow-y: auto;
+}
+ 
+.missing-modal-content {
+  background: var(--card);
+  max-width: 700px;
+  margin: 40px auto;
+  padding: 32px;
+  border-radius: var(--radius);
+  box-shadow: 0 8px 32px var(--shadow);
+}
+ 
+.missing-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+ 
+.missing-modal h2 {
+  font-family: 'Newsreader', serif;
+  font-size: 1.8rem;
+  color: var(--ink);
+}
+ 
+.close-modal {
+  background: none;
+  border: none;
+  font-size: 1.8rem;
+  color: var(--ink3);
+  cursor: pointer;
+  padding: 4px 8px;
+  line-height: 1;
+}
+ 
+.close-modal:hover {
+  color: var(--ink);
+}
+ 
+.missing-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+ 
+.missing-item {
+  padding: 16px;
+  background: var(--bg);
+  border-radius: 8px;
+  border-left: 4px solid #ff6b6b;
+}
+ 
+.missing-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+  margin-bottom: 8px;
+}
+ 
+.missing-item h3 {
+  font-family: 'Newsreader', serif;
+  font-size: 1.1rem;
+  font-style: italic;
+  color: var(--green);
+}
+ 
+.missing-time {
+  font-size: .75rem;
+  color: var(--ink3);
+  white-space: nowrap;
+}
+ 
+.missing-description {
+  font-size: .85rem;
+  color: var(--ink2);
+  line-height: 1.5;
+}
+ 
+.missing-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 12px;
+  padding: 8px 16px;
+  background: var(--green);
+  color: white;
+  text-decoration: none;
+  border-radius: 6px;
+  font-size: .8rem;
+  font-weight: 600;
+  transition: all .2s;
+}
+ 
+.missing-cta:hover {
+  background: var(--green2);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(42,92,32,0.3);
+}
+ 
+/* checklist button */
+.checklist-btn {
+  background: var(--gold);
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: .8rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all .2s;
+  white-space: nowrap;
+}
+ 
+.checklist-btn:hover {
+  background: #b38a24;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(196,154,42,0.3);
+}
+ 
+.checklist-modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.7);
+  z-index: 1000;
+  padding: 20px;
+  overflow-y: auto;
+}
+ 
+.checklist-modal-content {
+  background: var(--card);
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 32px;
+  border-radius: var(--radius);
+  box-shadow: 0 8px 32px var(--shadow);
+}
+ 
+.checklist-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 24px;
+  border-bottom: 2px solid var(--border);
+  padding-bottom: 8px;
+}
+ 
+.checklist-tab {
+  padding: 8px 16px;
+  background: transparent;
+  border: none;
+  font-size: .85rem;
+  font-weight: 600;
+  color: var(--ink3);
+  cursor: pointer;
+  border-radius: 6px 6px 0 0;
+  transition: all .2s;
+}
+ 
+.checklist-tab.active {
+  background: var(--green);
+  color: white;
+}
+ 
+.checklist-options {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 12px;
+  margin-bottom: 24px;
+}
+ 
+.checklist-option {
+  padding: 12px 16px;
+  background: var(--bg);
+  border: 2px solid var(--border);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all .2s;
+  text-align: center;
+  font-weight: 600;
+}
+ 
+.checklist-option:hover {
+  border-color: var(--green);
+  background: var(--greenlt);
+}
+ 
+.checklist-option.selected {
+  background: var(--green);
+  color: white;
+  border-color: var(--green);
+}
+ 
+.checklist-preview {
+  margin-top: 24px;
+  padding: 20px;
+  background: var(--bg);
+  border-radius: 8px;
+  max-height: 400px;
+  overflow-y: auto;
+}
+ 
+.checklist-preview h3 {
+  font-family: 'Newsreader', serif;
+  font-size: 1.3rem;
+  margin-bottom: 16px;
+  color: var(--green);
+}
+ 
+.checklist-species {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+  align-items: center;
+}
+ 
+.checklist-species:last-child {
+  border-bottom: none;
+}
+ 
+.species-names {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+ 
+.species-sci {
+  font-style: italic;
+  color: var(--ink);
+  font-size: .9rem;
+}
+ 
+.species-common {
+  font-size: .75rem;
+  color: var(--ink3);
+}
+ 
+.species-checkbox {
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--border);
+  border-radius: 4px;
+}
+ 
+.download-checklist-btn {
+  width: 100%;
+  padding: 12px;
+  background: var(--gold);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: .9rem;
+  font-weight: 700;
+  cursor: pointer;
+  margin-top: 16px;
+  transition: all .2s;
+}
+ 
+.download-checklist-btn:hover {
+  background: #b38a24;
+  transform: translateY(-1px);
+}
+```
+  
 </style>
 <style>
 /* cursor */
@@ -734,6 +1042,10 @@ img { border: 1px solid #2b463c !important; }
     </select>
   </div>
   <span class="count-pill" id="countPill">— species</span>
+  <div class="h-gap"></div>
+  <button class="checklist-btn" onclick="openChecklistModal()">
+    Get Checklist
+  </button>
 
   <!-- filters toggle button -->
   <button id="filtersToggleBtn" class="tab" style="margin-left:4px;">
@@ -2976,6 +3288,430 @@ function sortAmot(key) {
 
 // Init AMOT
 renderAmot(AMOT);
+  
+```javascript
+ 
+// ── Missing Observations & Checklists ────────────────────────────────────
+const observationData = {
+  "missingObservations": [
+    {
+      "scientificName": "Piper guahamense",
+      "commonName": "",
+      "daysSince": 211,
+      "lastSeen": "October 2025",
+      "obsCount": 25
+    },
+    {
+      "scientificName": "Capsicum frutescens",
+      "commonName": "",
+      "daysSince": 240,
+      "lastSeen": "September 2025",
+      "obsCount": 1
+    },
+    {
+      "scientificName": "Tacca leontopetaloides",
+      "commonName": "",
+      "daysSince": 282,
+      "lastSeen": "August 2025",
+      "obsCount": 18
+    },
+    {
+      "scientificName": "Erythrina variegata",
+      "commonName": "",
+      "daysSince": 346,
+      "lastSeen": "May 2025",
+      "obsCount": 8
+    },
+    {
+      "scientificName": "Dioscorea alata",
+      "commonName": "",
+      "daysSince": 354,
+      "lastSeen": "May 2025",
+      "obsCount": 1
+    },
+    {
+      "scientificName": "Heliotropium indicum",
+      "commonName": "",
+      "daysSince": 456,
+      "lastSeen": "February 2025",
+      "obsCount": 1
+    },
+    {
+      "scientificName": "Guilandina major",
+      "commonName": "",
+      "daysSince": 483,
+      "lastSeen": "January 2025",
+      "obsCount": 3
+    },
+    {
+      "scientificName": "Cananga odorata",
+      "commonName": "",
+      "daysSince": 509,
+      "lastSeen": "December 2024",
+      "obsCount": 6
+    },
+    {
+      "scientificName": "Mesosphaerum pectinatum",
+      "commonName": "",
+      "daysSince": 610,
+      "lastSeen": "September 2024",
+      "obsCount": 1
+    },
+    {
+      "scientificName": "Vitex negundo",
+      "commonName": "",
+      "daysSince": 789,
+      "lastSeen": "March 2024",
+      "obsCount": 1
+    },
+    {
+      "scientificName": "Dioscorea esculenta",
+      "commonName": "",
+      "daysSince": 2519,
+      "lastSeen": "June 2019",
+      "obsCount": 1
+    }
+  ],
+  "checklistsByVillage": {
+    "Dededo": [],
+    "Yigo": [],
+    "Tamuning": [],
+    "Mangilao": [],
+    "Santa Rita": [],
+    "Yona": [],
+    "Barrigada": [],
+    "Inarajan": [],
+    "Umatac": []
+  },
+  "checklistsByEcosystem": {
+    "Coastal": [],
+    "Forest": [],
+    "Urban": []
+  }
+};
+ 
+// Load full checklist data
+fetch('observation_data.json')
+  .then(r => r.json())
+  .then(data => {
+    Object.assign(observationData, data);
+    renderMissingBadges();
+  })
+  .catch(err => {
+    console.log('Using default observation data');
+    renderMissingBadges();
+  });
+ 
+function renderMissingBadges() {
+  // Add missing badges to species cards
+  const missing = observationData.missingObservations || [];
+  const missingSet = new Set(missing.map(m => m.scientificName));
+  
+  document.querySelectorAll('.card-sn').forEach(el => {
+    const sciName = el.textContent.trim();
+    if (missingSet.has(sciName)) {
+      const existing = el.querySelector('.missing-badge');
+      if (!existing) {
+        const badge = document.createElement('span');
+        badge.className = 'missing-badge';
+        badge.innerHTML = '<span class="missing-icon">🔍</span> Help find this!';
+        badge.onclick = (e) => {
+          e.stopPropagation();
+          openMissingModal();
+        };
+        el.appendChild(badge);
+      }
+    }
+  });
+}
+ 
+function openMissingModal() {
+  const modal = document.getElementById('missingModal');
+  const list = document.getElementById('missingList');
+  
+  const missing = observationData.missingObservations || [];
+  list.innerHTML = missing.map(item => {
+    const monthsAgo = Math.floor(item.daysSince / 30);
+    const timeStr = monthsAgo < 12 
+      ? `${monthsAgo} months ago`
+      : `over ${Math.floor(monthsAgo / 12)} ${Math.floor(monthsAgo / 12) === 1 ? 'year' : 'years'} ago`;
+    
+    return `
+      <div class="missing-item">
+        <div class="missing-item-header">
+          <h3>${item.scientificName}</h3>
+          <span class="missing-time">Last seen: ${item.lastSeen}</span>
+        </div>
+        <p class="missing-description">
+          This species was last documented ${timeStr} with only ${item.obsCount} observation${item.obsCount === 1 ? '' : 's'} total.
+          It may be rare, seasonal, or simply under-observed. Your documentation could help!
+        </p>
+        <a href="https://www.inaturalist.org/observations/upload?taxon_name=${encodeURIComponent(item.scientificName)}&place_id=7845" 
+           target="_blank" 
+           class="missing-cta">
+          📸 Document on iNaturalist
+        </a>
+      </div>
+    `;
+  }).join('');
+  
+  modal.style.display = 'block';
+}
+ 
+function closeMissingModal() {
+  document.getElementById('missingModal').style.display = 'none';
+}
+ 
+let currentChecklistSelection = null;
+let currentChecklistType = 'villages';
+ 
+function openChecklistModal() {
+  const modal = document.getElementById('checklistModal');
+  
+  // Populate village options
+  const villages = Object.keys(observationData.checklistsByVillage || {});
+  const villageOptions = document.getElementById('villageOptions');
+  villageOptions.innerHTML = villages.map(v => 
+    `<div class="checklist-option" onclick="selectChecklist('${v}', 'village')">${v}</div>`
+  ).join('');
+  
+  // Populate ecosystem options
+  const ecosystems = Object.keys(observationData.checklistsByEcosystem || {});
+  const ecosystemOptions = document.getElementById('ecosystemOptions');
+  ecosystemOptions.innerHTML = ecosystems.map(e => 
+    `<div class="checklist-option" onclick="selectChecklist('${e}', 'ecosystem')">${e}</div>`
+  ).join('');
+  
+  modal.style.display = 'block';
+}
+ 
+function closeChecklistModal() {
+  document.getElementById('checklistModal').style.display = 'none';
+  currentChecklistSelection = null;
+}
+ 
+function showChecklistTab(tab) {
+  currentChecklistType = tab;
+  document.querySelectorAll('.checklist-tab').forEach(t => t.classList.remove('active'));
+  event.target.classList.add('active');
+  
+  document.getElementById('villagesTab').style.display = tab === 'villages' ? 'block' : 'none';
+  document.getElementById('ecosystemsTab').style.display = tab === 'ecosystems' ? 'block' : 'none';
+  document.getElementById('checklistPreview').style.display = 'none';
+  currentChecklistSelection = null;
+}
+ 
+function selectChecklist(name, type) {
+  document.querySelectorAll('.checklist-option').forEach(o => o.classList.remove('selected'));
+  event.target.classList.add('selected');
+  
+  currentChecklistSelection = { name, type };
+  
+  const data = type === 'village' 
+    ? observationData.checklistsByVillage[name]
+    : observationData.checklistsByEcosystem[name];
+  
+  const preview = document.getElementById('checklistPreview');
+  const title = document.getElementById('previewTitle');
+  const content = document.getElementById('previewContent');
+  
+  title.textContent = `${name} Species Checklist (${data.length} species)`;
+  
+  content.innerHTML = data.slice(0, 50).map(sp => `
+    <div class="checklist-species">
+      <div class="species-names">
+        <div class="species-sci">${sp.scientificName}</div>
+        ${sp.commonName ? `<div class="species-common">${sp.commonName}</div>` : ''}
+      </div>
+      <div class="species-checkbox"></div>
+    </div>
+  `).join('');
+  
+  if (data.length > 50) {
+    content.innerHTML += `<div style="padding:12px;text-align:center;color:var(--ink3);font-size:.8rem;">
+      + ${data.length - 50} more species in full checklist
+    </div>`;
+  }
+  
+  preview.style.display = 'block';
+  preview.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+ 
+function downloadChecklist() {
+  if (!currentChecklistSelection) return;
+  
+  const { name, type } = currentChecklistSelection;
+  const data = type === 'village' 
+    ? observationData.checklistsByVillage[name]
+    : observationData.checklistsByEcosystem[name];
+  
+  // Generate CSV for now (simpler than PDF generation in browser)
+  const csv = [
+    ['☐', 'Scientific Name', 'Common Name', 'Observations'],
+    ...data.map(sp => ['☐', sp.scientificName, sp.commonName || '', sp.obsCount])
+  ].map(row => row.join(',')).join('\n');
+  
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `guam-flora-checklist-${name.toLowerCase().replace(/\s+/g, '-')}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+  
+  // Also show option to print as PDF
+  setTimeout(() => {
+    if (confirm('Checklist downloaded as CSV!\n\nWould you like to open a printer-friendly view for PDF export?')) {
+      openPrintableChecklist(name, data);
+    }
+  }, 500);
+}
+ 
+function openPrintableChecklist(name, data) {
+  const printWindow = window.open('', '_blank');
+  printWindow.document.write(`
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <title>${name} Species Checklist</title>
+      <style>
+        body { font-family: Arial, sans-serif; padding: 20px; max-width: 800px; margin: 0 auto; }
+        h1 { color: #2a5c20; border-bottom: 3px solid #2a5c20; padding-bottom: 10px; }
+        .meta { color: #666; font-size: 14px; margin-bottom: 30px; }
+        .species { display: grid; grid-template-columns: 30px 1fr auto; gap: 10px; padding: 8px 0; border-bottom: 1px solid #ddd; }
+        .checkbox { border: 2px solid #666; width: 20px; height: 20px; }
+        .sci { font-style: italic; font-weight: bold; }
+        .common { font-size: 12px; color: #666; }
+        @media print { 
+          button { display: none; }
+          .species { page-break-inside: avoid; }
+        }
+      </style>
+    </head>
+    <body>
+      <h1>🌿 ${name} Species Checklist</h1>
+      <div class="meta">
+        <strong>Guam Flora & Fungi Field Guide</strong><br>
+        Generated: ${new Date().toLocaleDateString()}<br>
+        Total species: ${data.length}
+      </div>
+      <button onclick="window.print()" style="padding:10px 20px; background:#2a5c20; color:white; border:none; border-radius:5px; cursor:pointer; margin-bottom:20px;">
+        Print / Save as PDF
+      </button>
+      ${data.map(sp => `
+        <div class="species">
+          <div class="checkbox"></div>
+          <div>
+            <div class="sci">${sp.scientificName}</div>
+            ${sp.commonName ? `<div class="common">${sp.commonName}</div>` : ''}
+          </div>
+          <div style="font-size:12px;color:#999;">${sp.obsCount} obs</div>
+        </div>
+      `).join('')}
+    </body>
+    </html>
+  `);
+  printWindow.document.close();
+}
+ 
+// Add iNaturalist CTA to species detail view
+const originalShowDetail = showDetail;
+window.showDetail = function(id) {
+  originalShowDetail(id);
+  
+  // Wait for detail to be populated
+  setTimeout(() => {
+    const sciName = document.querySelector('.det-sn')?.textContent;
+    const inatLink = document.querySelector('.inat-link');
+    
+    if (sciName && inatLink) {
+      const missing = observationData.missingObservations?.find(m => m.scientificName === sciName);
+      
+      if (missing) {
+        const callout = document.createElement('div');
+        callout.style.cssText = 'background:#fff3cd;border-left:4px solid #ff6b6b;padding:16px;margin:16px 20px;border-radius:8px;';
+        callout.innerHTML = `
+          <div style="font-weight:600;color:#856404;margin-bottom:8px;">🔍 Help document this species!</div>
+          <div style="font-size:.85rem;color:#856404;line-height:1.6;">
+            This plant was last seen <strong>${missing.lastSeen}</strong>. 
+            Found it on a hike? Your observation helps track biodiversity on Guam.
+          </div>
+        `;
+        inatLink.parentNode.insertBefore(callout, inatLink);
+      }
+      
+      // Update iNaturalist link to be observation upload
+      const inatHref = inatLink.getAttribute('href');
+      if (inatHref && !inatHref.includes('upload')) {
+        inatLink.setAttribute('href', `https://www.inaturalist.org/observations/upload?taxon_name=${encodeURIComponent(sciName)}&place_id=7845`);
+        inatLink.innerHTML = inatLink.innerHTML.replace('View on', 'Document on');
+      }
+    }
+  }, 100);
+};
+ 
+// Re-render badges when grid updates
+const originalRenderGrid = renderGrid;
+window.renderGrid = function(arr) {
+  originalRenderGrid(arr);
+  setTimeout(renderMissingBadges, 100);
+};
+```
+  
 </script>
+
+```html
+<!-- Missing Observations Modal -->
+<div id="missingModal" class="missing-modal" onclick="if(event.target===this) closeMissingModal()">
+  <div class="missing-modal-content">
+    <div class="missing-modal-header">
+      <h2>Help Document These Species</h2>
+      <button class="close-modal" onclick="closeMissingModal()">×</button>
+    </div>
+    <p style="color:var(--ink2);margin-bottom:24px;line-height:1.6;">
+      These plants haven't been observed on iNaturalist in over 6 months. 
+      Help the community by looking for and documenting them on your next hike!
+    </p>
+    <div class="missing-list" id="missingList"></div>
+  </div>
+</div>
+ 
+<!-- Checklist Modal -->
+<div id="checklistModal" class="checklist-modal" onclick="if(event.target===this) closeChecklistModal()">
+  <div class="checklist-modal-content">
+    <div class="missing-modal-header">
+      <h2>Downloadable Field Checklists</h2>
+      <button class="close-modal" onclick="closeChecklistModal()">×</button>
+    </div>
+    <p style="color:var(--ink2);margin-bottom:20px;line-height:1.6;">
+      Curious of the species you'll be seeing in your next adventure? Select a village or ecosystem to generate a printable species checklist for your next hike or field survey.
+    </p>
+    
+    <div class="checklist-tabs">
+      <button class="checklist-tab active" onclick="showChecklistTab('villages')">By Village</button>
+      <button class="checklist-tab" onclick="showChecklistTab('ecosystems')">By Ecosystem</button>
+    </div>
+    
+    <div id="villagesTab" class="checklist-tab-content">
+      <div class="checklist-options" id="villageOptions"></div>
+    </div>
+    
+    <div id="ecosystemsTab" class="checklist-tab-content" style="display:none;">
+      <div class="checklist-options" id="ecosystemOptions"></div>
+    </div>
+    
+    <div class="checklist-preview" id="checklistPreview" style="display:none;">
+      <h3 id="previewTitle"></h3>
+      <div id="previewContent"></div>
+      <button class="download-checklist-btn" onclick="downloadChecklist()">
+        Download PDF Checklist
+      </button>
+    </div>
+  </div>
+</div>
+ 
+```
+ 
+  
 </body>
 </html>
