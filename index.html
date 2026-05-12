@@ -9,7 +9,7 @@
 <meta property="og:description" content="Browse and identify 1,500+ plant and fungi species observed on Guam. Community-driven field guide by DPRS Botanical and Mycological Society.">
 <meta property="og:image" content="https://i.ibb.co/sphHdgwH/dprs.png">
 <meta property="og:type" content="website">
-<title>Guam Flora & Fungi · Field Guide</title>
+<title>DPRS Guam Plant/Fungi Repository</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&family=DM+Sans:ital,opsz,wght@0,9..40,200..700;1,9..40,200..700&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
@@ -192,7 +192,7 @@ header{
 .card-sn{font-family:'Playfair Display',serif;font-style:italic;font-size:.98rem;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.3;}
 .card-tg{font-size:.62rem;color:var(--ink3);margin-top:4px;letter-spacing:.03em;}
 
-/* no results */
+/* if no results */
 #noResults{display:none;text-align:center;padding:5rem 2rem;color:var(--ink3);grid-column:1/-1;}
 #noResults .nr-h{font-family:'Playfair Display',serif;font-size:1.5rem;color:var(--ink2);margin-bottom:.5rem;}
 
@@ -412,7 +412,7 @@ header{
     font-size: 0.82rem !important;
   }
 
-  /* nav buttons: compact icon+label */
+  /* nav buttons */
   .view-btns {
     flex-shrink: 0;
     gap: 2px !important;
@@ -421,16 +421,16 @@ header{
     font-size: 0.62rem !important;
     padding: 4px 7px !important;
   }
-  /* hide SVG icons inside nav buttons on mobile */
+  /* svg display mobile */
   .view-btn svg { display: none; }
 
-  /* ── TOOLBAR ── */
+  /* toolbar */
   .toolbar {
     top: 56px;
     padding: 8px 12px !important;
     gap: 6px !important;
   }
-  /* Row 1: group tabs + type + sort — stack into two sub-rows */
+
   .toolbar > .filter-label:first-child { display: none; }
 
   #groupTabs { gap: 4px; }
@@ -439,8 +439,7 @@ header{
     font-size: 0.68rem !important;
   }
   .sep { display: none; }
-
-  /* Type and Sort each take half width */
+  
   #taxGroupSelect,
   #sortSelect {
     flex: 1;
@@ -457,8 +456,7 @@ header{
     text-align: center;
     font-size: 0.68rem !important;
   }
-
-  /* Filter rows: each label on its own line, select full width */
+  
   .toolbar-row {
     gap: 5px !important;
     row-gap: 6px !important;
@@ -479,14 +477,14 @@ header{
     margin-top: 2px;
   }
 
-  /* ── HERO ── */
+  /* hero */
   #heroSection {
     grid-template-columns: 1fr !important;
     padding: 0.75rem !important;
     gap: 0.75rem !important;
   }
 
-  /* POTD: stack image on top */
+  /* potd */
   #potdCard > div:nth-child(2) {
     flex-direction: column !important;
   }
@@ -495,14 +493,14 @@ header{
     height: 180px !important;
   }
 
-  /* ── GRID ── */
+  /* grid */
   #grid {
     padding: 0.75rem !important;
     gap: 0.6rem !important;
     grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)) !important;
   }
 
-  /* ── DETAIL PANEL ── */
+  /* detail panel */
   #detail {
     width: 100vw !important;
   }
@@ -744,7 +742,7 @@ img { border: 1px solid #2b463c !important; }
   <!-- collapsible filter panel -->
   <div id="filterPanel" style="display:none;width:100%;">
 
-  <!-- row 2: instant identification (shown only when Plantae group selected) -->
+  <!-- plantae filter on -->
   <div class="toolbar-row" id="plantFilterRow" style="display:none;">
     <span class="filter-label">Flower color</span>
     <select id="colorFilter" class="filter-select">
@@ -793,7 +791,7 @@ img { border: 1px solid #2b463c !important; }
     </select>
   </div>
 
-  <!-- row 2b: fungi-specific filters (shown only when Fungi group selected) -->
+  <!-- fungi filter on -->
   <div class="toolbar-row" id="fungiFilterRow" style="display:none;">
     <span class="filter-label">Fungi color</span>
     <select id="fungiColorFilter" class="filter-select">
@@ -820,7 +818,7 @@ img { border: 1px solid #2b463c !important; }
     </select>
   </div>
 
-  <!-- row 3: ecosystem + village -->
+  <!-- ecosys+village -->
   <div class="toolbar-row">
     <span class="filter-label">Ecosystem</span>
     <select id="ecoFilter" class="filter-select">
@@ -1033,8 +1031,8 @@ let currentView = 'grid';
 let leafletMap = null, markerLayer = null;
 let detailMiniMap = null;
 
-// ── LOOKUP TABLES ──────────────────────────────────────────────────────
-// Flower color keyed by scientific name (partial/genus matches supplemented below)
+// lookup tables
+// Flower color 
 const FLOWER_COLOR = {
   // White
   'Scaevola taccada':'white','Bikkia tetrandra':'white','Plumeria obtusa':'white',
@@ -1165,7 +1163,7 @@ const FLOWER_COLOR = {
   'Pandanus':'green','Bambusa vulgaris':'green','Flagellaria':'green',
   'Epipremnum aureum':'green','Syngonium podophyllum':'green',
   'Epipremnum pinnatum':'green','Tradescantia spathacea':'white',
-  // Additional coverage for high-obs species
+  // 4got to add
   'Polytrias indica':'green','Cycas micronesica':'green','Phyllanthus saffordii':'green',
   'Phyllanthus mariannensis':'green','Bothriochloa pertusa':'green',
   'Mimosa pudica':'pink','Ipomoea pes-caprae':'pink','Triphasia trifolia':'white',
@@ -1184,7 +1182,6 @@ const FLOWER_COLOR = {
   'Marasmius haematocephalus':'red','Dacrymyces spathularia':'yellow',
   'Lycoperdaceae':'brown','Geastrum':'brown','Mycena':'white',
   'Leucocoprinus birnbaumii':'yellow','Schizophyllum commune':'white',
-  // Final coverage batch - flower colors
   'Hibiscus':'pink','Alysicarpus vaginalis':'pink','Hyptis capitata':'purple',
   'Caulerpa racemosa':'green','Acacia auriculiformis':'yellow',
   'Pipturus argenteus':'white','Fabaceae':'purple','Youngia japonica':'yellow',
@@ -1216,7 +1213,6 @@ const FLOWER_COLOR = {
   'Adiantum tenerum':'green','Selenicereus undatus':'white',
   'Freycinetia':'white',
   'Adonidia':'white',
-  // Targeted additions for remaining gap
   'Ipomoea':'purple','Lecanoromycetes':'gray','Dieffenbachia seguine':'green',
   'Spermacoce remota':'white','Artocarpus':'green','Eugenia':'white',
   'Pteris vittata':'green','Portulaca oleracea':'yellow','Eleusine indica':'green',
@@ -1231,7 +1227,7 @@ const FLOWER_COLOR = {
   'Nervilia':'white',
 };
 
-// Leaf shape keyed by scientific name
+// Leaf shape 
 const LEAF_SHAPE = {
   // Broad / oval
   'Cocos nucifera':'linear','Artocarpus altilis':'lobed','Artocarpus mariannensis':'broad-oval',
@@ -1332,7 +1328,6 @@ const LEAF_SHAPE = {
   // Scale / reduced
   'Cassytha filiformis':'scale',
   'Psilotum nudum':'scale',
-  // Additional entries to reach 80%+ coverage
   // Broad / oval
   'Tridax procumbens':'lance','Bidens pilosa':'lance','Bidens alba':'lance',
   'Bidens':'lance','Turnera ulmifolia':'broad-oval','Ruellia':'broad-oval',
@@ -1408,7 +1403,7 @@ const LEAF_SHAPE = {
   'Asclepias curassavica':'lance','Hippobroma':'lance',
   'Cenchrus echinatus':'linear','Bryophyta':'scale',
   'Asteroideae':'lance','Tacca':'lobed',
-  // final gap-closure entries
+  // 4got to add
   'Agaricales':'scale','Caulerpa racemosa':'linear',
   'Davallia solida':'compound','Davallia':'compound',
   'Phallus indusiatus':'scale','Phallus':'scale',
@@ -1428,7 +1423,6 @@ const LEAF_SHAPE = {
   'Epidendrum':'linear','Geodorum recurvum':'broad-oval',
   'Eulophia':'linear',
   'Zeuxine':'linear','Nervilia':'heart',
-  // final 80% push
   'Eugenia':'broad-oval','Leucocoprinus birnbaumii':'scale',
   'Pteris vittata':'compound','Eleusine indica':'linear',
   'Citrus':'compound','Allamanda cathartica':'broad-oval',
@@ -1438,7 +1432,7 @@ const LEAF_SHAPE = {
   'Dactyloctenium aegyptium':'linear',
 };
 
-// plant size: 'small'(<1m), 'medium'(1-5m), 'tall'(>5m)
+// plant size
 const PLANT_SIZE = {
   tall: [
     'Cocos nucifera','Artocarpus altilis','Artocarpus mariannensis','Delonix regia',
@@ -1897,7 +1891,7 @@ const TAXGROUP_FUNGI_SHAPE = {
   'Lichens':'crust',
 };
 
-// ecosystem keyed by scientific name
+// ecosys
 const ECOSYSTEM_MAP = {
   limestone: [
     'Cycas micronesica','Cynometra ramiflora','Bikkia tetrandra','Ficus prolixa',
